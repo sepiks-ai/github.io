@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paul Harrald - Interactive CV</title>
+  <style>
+    :root {
+      --primary-color: #1a237e;
+      --secondary-color: #283593;
+      --accent-color: #42a5f5;
+      --light-bg: #f5f5f5;
+      --dark-text: #333;
+      --light-text: #f5f5f5;
+      --border-color: #e0e0e0;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      line-height: 1.6;
+      color: var(--dark-text);
+      background-color: var(--light-bg);
+    }
+    
+    header {
+      background-color: var(--primary-color);
+      color: var(--light-text);
+      padding: 2rem;
+      text-align: center;
+      position: relative;
+    }
+    
+    .profile-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .profile-image {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background-color: #fff;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-color);
+      font-weight: bold;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .title {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      margin-bottom: 1rem;
+    }
+    
+    .download-btn {
+      background-color: var(--accent-color);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: bold;
+      display: inline-block;
+      margin-top: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .download-btn:hover {
+      background-color: #1e88e5;
+      transform: translateY(-2px);
+    }
+    
+    nav {
+      background-color: var(--secondary-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    nav ul {
+      display: flex;
+      justify-content: center;
+      list-style: none;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    nav ul li {
+      position: relative;
+    }
+    
+    nav ul li a {
+      display: block;
+      color: var(--light-text);
+      text-decoration: none;
+      padding: 1rem 1.5rem;
+      transition: all 0.3s ease;
+    }
+    
+    nav ul li a:hover {
+      background-color: rgba(255,255,255,0.1);
+    }
+    
+    main {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+    
+    section {
+      margin-bottom: 3rem;
+      padding: 2rem;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      position: relative;
+    }
+    
+    section h2 {
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+      position: relative;
+      padding-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+    }
+    
+    section h2:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100px;
+      height: 3px;
+      background-color: var(--accent-color);
+    }
+    
+    .video-button {
+      position: absolute;
+      right: 2rem;
+      top: 2rem;
+      background-color: var(--accent-color);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+    
+    .video-button:hover {
+      background-color: #1e88e5;
+      transform: scale(1.1);
+    }
+    
+    .video-sidebar {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 400px;
+      height: 100%;
+      background-color: rgba(0,0,0,0.9);
+      z-index: 1000;
+      transition: right 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .video-sidebar.active {
+      right: 0;
+    }
+    
+    .close-video {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      color: white;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    
+    .video-container {
+      flex: 1;
+      padding: 60px 20px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .video-placeholder {
+      width: 100%;
+      height: 225px;
+      background-color: #000;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      border-radius: 8px;
+    }
+    
+    .experience-item {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    
+    .job-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      background-color: var(--light-bg);
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    
+    .job-header:hover {
+      background-color: rgba(66, 165, 245, 0.1);
+    }
+    
+    .company-info {
+      flex: 1;
+    }
+    
+    .company {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+    
+    .period {
+      color: var(--secondary-color);
+      font-weight: bold;
+    }
+    
+    .location {
+      color: #666;
+      font-style: italic;
+    }
+    
+    .expand-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s ease;
+    }
+    
+    .expand-icon.active {
+      transform: rotate(180deg);
+    }
+    
+    .job-details {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease;
+      padding: 0 1.5rem;
+    }
+    
+    .job-details.active {
+      max-height: 1000px;
+      padding: 1.5rem;
+    }
+    
+    .role {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+    
+    ul.responsibilities {
+      margin-left: 1.5rem;
+      margin-top: 0.5rem;
+    }
+    
+    ul.responsibilities li {
+      margin-bottom: 0.5rem;
+    }
+    
+    .publications-list {
+      list-style: none;
+    }
+    
+    .publications-list li {
+      margin-bottom: 1.5rem;
+      position: relative;
+      padding-left: 1.5rem;
+    }
+    
+    .publications-list li:before {
+      content: '📄';
+      position: absolute;
+      left: 0;
+      top: 3px;
+    }
+    
+    .external-links {
+      display: flex;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+    
+    .external-link {
+      background-color: var(--light-bg);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-right: 1rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: var(--primary-color);
+      transition: all 0.3s ease;
+    }
+    
+    .external-link:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .icon {
+      margin-right: 0.5rem;
+      font-size: 1.2rem;
+    }
+    
+    footer {
+      background-color: var(--primary-color);
+      color: var(--light-text);
+      text-align: center;
+      padding: 2rem;
+      margin-top: 3rem;
+    }
+    
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 999;
+      display: none;
+    }
+    
+    .modal-overlay.active {
+      display: block;
+    }
+    
+    /* Version control indicator */
+    .version-control {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background-color: rgba(0,0,0,0.2);
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Video sidebar for Profile section -->
+  <div id="video-sidebar-profile" class="video-sidebar">
+    <button class="close-video" onclick="closeVideoSidebar('profile')">×</button>
+    <div class="video-container">
+      <div class="video-placeholder">Profile Overview Video</div>
+    </div>
+  </div>
+  
+  <!-- Video sidebar for Experience section -->
+  <div id="video-sidebar-experience" class="video-sidebar">
+    <button class="close-video" onclick="closeVideoSidebar('experience')">×</button>
+    <div class="video-container">
+      <div class="video-placeholder">Experience Overview Video</div>
+    </div>
+  </div>
+  
+  <!-- Other video sidebars would follow the same pattern -->
+  
+  <!-- Modal overlay -->
+  <div class="modal-overlay" id="modal-overlay"></div>
+  
+  <header>
+    <div class="version-control">Version 1.2 - March 2025</div>
+    <div class="profile-container">
+      <div class="profile-image">PH</div>
+      <h1>Paul Harrald</h1>
+      <p class="title">Executive, Entrepreneur & AI/Blockchain Researcher</p>
+      <a href="#" class="download-btn">Download PDF CV</a>
+    </div>
+  </header>
+  
+  <nav>
+    <ul>
+      <li><a href="#profile">Profile</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#education">Education</a></li>
+      <li><a href="#publications">Publications</a></li>
+      <li><a href="#visiting">Visiting Positions</a></li>
+      <li><a href="#references">References</a></li>
+    </ul>
+  </nav>
+  
+  <main>
+    <section id="profile">
+      <button class="video-button" onclick="openVideoSidebar('profile')">▶</button>
+      <h2>Profile</h2>
+      <div class="content">
+        <p>Executive and entrepreneur with tenured research level academic skills in AI, blockchain and simulation; 20 years of experience in corporate leadership, 2x £500m++ start up. Business experience includes multiple board level positions with an emphasis on ML, finance, and risk strategy. Senior buy side experience in private equity and hedge funds; management of large teams and potent individual contribution. Founded 2x consumer lending companies both based on advanced use of data (EEA/UK).</p>
+      </div>
+    </section>
+    
+    <section id="experience">
+      <button class="video-button" onclick="openVideoSidebar('experience')">▶</button>
+      <h2>Experience</h2>
+      
+      <div class="experience-item">
+        <div class="job-header" onclick="toggleJobDetails(this)">
+          <div class="company-info">
+            <div class="company">Sepiks.ai</div>
+            <div class="meta-info">
+              <span class="period">Jan 2024 - Present</span> | <span class="location">London</span>
+            </div>
+          </div>
+          <div class="expand-icon">▼</div>
+        </div>
+        <div class="job-details">
+          <div class="role">Founder, incubator</div>
+          <p>Incubating and bootstrapping it until a CTO is hired and an Angel round is complete.</p>
+        </div>
+      </div>
+      
+      <div class="experience-item">
+        <div class="job-header" onclick="toggleJobDetails(this)">
+          <div class="company-info">
+            <div class="company">CURVE</div>
+            <div class="meta-info">
+              <span class="period">Dec 2020 - Present</span> | <span class="location">London</span>
+            </div>
+          </div>
+          <div class="expand-icon">▼</div>
+        </div>
+        <div class="job-details">
+          <div class="role">Group CFO, CIO, CEO Curve Credit Ltd; Advisor</div>
+          <p>A CreditEase portfolio investment. Joined from the fund at Series C to create consumer lending businesses in US, EEA and UK; once done, then CIO and CFO, Board Director.</p>
+          <ul class="responsibilities">
+            <li>All regulatory liaison for establishment of consumer lending permissions in UK and EEA (as SMF1); secured $1bn senior funding and a BIN-sponsor arrangement in the US. Developed in-app lending product and built out servicing infrastructure.</li>
+            <li>As CIO developed a credible and advanced ML/AI agenda and real-time monitoring. Successfully created and managed a risk and compliance function and replaced and managed all executive management in Lithuania.</li>
+            <li>As CFO, with CEO led a successful fundraising rounds holding the 2021 Series C valuation while implementing treasury, capital and cash flow management.</li>
+            <li>Orchestrated a full turnaround of business model from all-margin negative to all margin positive. Clean NMC PWC audit of all entities, clean audits in the US and EEA.</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="experience-item">
+        <div class="job-header" onclick="toggleJobDetails(this)">
+          <div class="company-info">
+            <div class="company">CREDITEASE FINTECH FUND AND FUND OF FUNDS</div>
+            <div class="meta-info">
+              <span class="period">Nov 2018 - Dec 2020</span> | <span class="location">London</span>
+            </div>
+          </div>
+          <div class="expand-icon">▼</div>
+        </div>
+        <div class="job-details">
+          <div class="role">Managing Director, Head of European Investments</div>
+          <p>Recruited by a former employee to lead EU/UK investments in fintech for this Chinese fund.</p>
+          <ul class="responsibilities">
+            <li>Leading origination of UK and European investments for the $500m fund.</li>
+            <li>Of the fund's 42 investments 9 became unicorns in this time.</li>
+            <li>Sourcing deals, management of deal flow, due diligence and investment structuring.</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="experience-item">
+        <div class="job-header" onclick="toggleJobDetails(this)">
+          <div class="company-info">
+            <div class="company">GOOGLE</div>
+            <div class="meta-info">
+              <span class="period">Dec 2016 - Nov 2018</span> | <span class="location">Hyderabad, Singapore, London</span>
+            </div>
+          </div>
+          <div class="expand-icon">▼</div>
+        </div>
+        <div class="job-details">
+          <div class="role">Risk Advisor</div>
+          <p>Recruited by former STAN regional CEO to act as Credit and Risk Advisor to the Next Billion Users initiatives focused on financial products.</p>
+          <ul class="responsibilities">
+            <li>Technical consulting on uses of machine learning and AI in financial product provision</li>
+            <li>Support Capital G on (African) M&A investment opportunities.</li>
+            <li>Evaluation of provision new financial products</li>
+            <li>Evaluation of alternatives Google data to support real time decisioning</li>
+          </ul>
+        </div>
+      </div>
+      
+      <!-- More experiences would be added here -->
+    </section>
+    
+    <section id="education">
+      <button class="video-button" onclick="openVideoSidebar('education')">▶</button>
+      <h2>Education</h2>
+      <div class="content">
+        <p>BA (Hons), and MA, PhD, Economics at Simon Fraser University supported by a Commonwealth Scholarship, the Sir Peter Allen Travelling Fellowship and grants from the Social Sciences and Humanities research Council of Canada.</p>
+      </div>
+    </section>
+    
+    <section id="publications">
+      <button class="video-button" onclick="openVideoSidebar('publications')">▶</button>
+      <h2>Selected Publications</h2>
+      <ul class="publications-list">
+        <li>Opeoluwa, B., P. Harrald and F. Medda, "Understanding the consequences of diversification on financial stability" <em>Journal of Economic Interaction and Coordination</em>, January 2018.</li>
+        <li>Opeoluwa, B., P. Harrald <em>et al</em> "The effect of heterogeneity on financial contagion due to overlapping portfolios" <em>Advances in Complex Systems</em>, 19 (8), December 2016.</li>
+        <li>Kan, Y.Y., P. Harrald <em>et al</em>. "Transfer risk under Basel Pillar 1," <em>Journal of Credit Risk</em>, June 2011.</li>
+        <li>Gomme, P and P. Harrald "Applying evolutionary programming to selected set partitioning problems," <em>Fuzzy Sets and Systems</em>, June 1998.</li>
+        <li>Harrald, P. and M. Kamstra "Evolving neural networks to combine financial forecasts," <em>IEEE Transactions on Evolutionary Programming</em>, June 1997.</li>
+      </ul>
+    </section>
+    
+    <section id="visiting">
+      <button class="video-button" onclick="openVideoSidebar('visiting')">▶</button>
+      <h2>Visiting Positions</h2>
+      <ul>
+        <li><strong>University College London</strong>, honorary visiting Professor in Computing Science</li>
+        <li><strong>Max Planck Institute</strong>, Jena, Visiting Scholar, Institute for Evolutionary Economics</li>
+        <li><strong>Helsinki School of Economics and Business Administration</strong>, visiting Lecturer</li>
+        <li><strong>Wilfrid Laurier University Department of Economics</strong>, visiting Scholar</li>
+        <li><strong>Edinburgh University</strong>, <strong>Artificial Intelligence Applications Institute</strong>, visiting Scholar</li>
+        <li><strong>Canadian Institute for Advanced Research</strong>, assisting Prof Richard Lipsey in research into innovation and economic growth</li>
+        <li><strong>Oxford University</strong>, Saïd Business School, lectures in fintech</li>
+      </ul>
+    </section>
+    
+    <section id="references">
+      <button class="video-button" onclick="openVideoSidebar('references')">▶</button>
+      <h2>References</h2>
+      <p>FTSE 100 Board level references available. All my previous managers since 2000 are available for reference.</p>
+      
+      <div class="external-links">
+        <h3>External Resources</h3>
+        <a href="https://community.wolfram.com/web/pharrald" class="external-link">
+          <span class="icon">🔗</span> Wolfram Community Profile
+        </a>
+        <a href="http://www.sepiks.ai" class="external-link">
+          <span class="icon">🏢</span> Sepiks.ai
+        </a>
+        <a href="https://www.curve.com/en-gb/" class="external-link">
+          <span class="icon">💼</span> CURVE
+        </a>
+        <a href="https://github.com/yourprofile" class="external-link">
+          <span class="icon">💻</span> GitHub Profile
+        </a>
+        <a href="https://linkedin.com/in/yourprofile" class="external-link">
+          <span class="icon">👔</span> LinkedIn Profile
+        </a>
+      </div>
+    </section>
+  </main>
+  
+  <footer>
+    <p>&copy; 2025 Paul Harrald. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Function to toggle job details
+    function toggleJobDetails(element) {
+      const details = element.nextElementSibling;
+      const expandIcon = element.querySelector('.expand-icon');
+      
+      if (details.classList.contains('active')) {
+        details.classList.remove('active');
+        expandIcon.classList.remove('active');
+      } else {
+        details.classList.add('active');
+        expandIcon.classList.add('active');
+      }
+    }
+    
+    // Function to open video sidebar
+    function openVideoSidebar(section) {
+      document.getElementById(`video-sidebar-${section}`).classList.add('active');
+      document.getElementById('modal-overlay').classList.add('active');
+    }
+    
+    // Function to close video sidebar
+    function closeVideoSidebar(section) {
+      document.getElementById(`video-sidebar-${section}`).classList.remove('active');
+      document.getElementById('modal-overlay').classList.remove('active');
+    }
+    
+    // Close sidebar when clicking on overlay
+    document.getElementById('modal-overlay').addEventListener('click', function() {
+      document.querySelectorAll('.video-sidebar').forEach(sidebar => {
+        sidebar.classList.remove('active');
+      });
+      this.classList.remove('active');
+    });
+  </script>
+</body>
+</html>
