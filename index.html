@@ -79,6 +79,7 @@
       position: relative;
       display: inline-block;
       margin-top: 1rem;
+      z-index: 101; /* Higher than the navbar z-index */
     }
     
     .download-btn {
@@ -106,7 +107,7 @@
       background-color: white;
       min-width: 160px;
       box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-      z-index: 1;
+      z-index: 101; /* Higher than the navbar z-index */
       border-radius: 4px;
       overflow: hidden;
       left: 0;
@@ -133,7 +134,7 @@
       background-color: var(--secondary-color);
       position: sticky;
       top: 0;
-      z-index: 100;
+      z-index: 100; /* Lower than dropdown z-index */
     }
     
     nav ul {
@@ -213,6 +214,27 @@
     }
     
     .video-button:hover {
+      background-color: #1e88e5;
+      transform: scale(1.1);
+    }
+    
+    .role-video-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      background-color: var(--accent-color);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      font-size: 10px;
+      margin-left: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .role-video-button:hover {
       background-color: #1e88e5;
       transform: scale(1.1);
     }
@@ -334,6 +356,8 @@
     .role {
       font-weight: bold;
       margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
     }
     
     ul.responsibilities {
@@ -424,10 +448,75 @@
       border-radius: 20px;
       font-size: 0.8rem;
     }
+    
+    /* Substack styles */
+    .substack-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    
+    .article-card {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .article-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    
+    .article-header {
+      background-color: var(--light-bg);
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .article-title {
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+      color: var(--primary-color);
+    }
+    
+    .article-date {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    
+    .article-excerpt {
+      padding: 1.5rem;
+      color: var(--dark-text);
+    }
+    
+    .article-link {
+      display: inline-block;
+      margin-top: 1rem;
+      color: var(--accent-color);
+      font-weight: bold;
+      text-decoration: none;
+    }
+    
+    .article-link:hover {
+      text-decoration: underline;
+    }
+    
+    .loading-text {
+      text-align: center;
+      color: #666;
+      padding: 2rem;
+    }
+    
+    .error-text {
+      text-align: center;
+      color: #e74c3c;
+      padding: 2rem;
+    }
   </style>
 </head>
 <body>
-  <!-- Video sidebars for each section -->
+  <!-- Section video sidebars -->
   <div id="video-sidebar-profile" class="video-sidebar">
     <button class="close-video" onclick="closeVideoSidebar('profile')">×</button>
     <div class="video-container">
@@ -463,6 +552,13 @@
     </div>
   </div>
   
+  <div id="video-sidebar-substack" class="video-sidebar">
+    <button class="close-video" onclick="closeVideoSidebar('substack')">×</button>
+    <div class="video-container">
+      <div class="video-placeholder">Substack Overview Video</div>
+    </div>
+  </div>
+  
   <div id="video-sidebar-references" class="video-sidebar">
     <button class="close-video" onclick="closeVideoSidebar('references')">×</button>
     <div class="video-container">
@@ -470,11 +566,110 @@
     </div>
   </div>
   
+  <!-- Role video sidebars -->
+  <div id="video-sidebar-sepiks" class="video-sidebar">
+    <button class="close-video" onclick="closeVideoSidebar('sepiks')">×</button>
+    <div class="video-container">
+      <div class="video-placeholder">Sepiks.ai Role Video</div>
+    </div>
+  </div>
+  
+  <div id="video-sidebar-wolfram" class="video-sidebar">
+    <button class="close-video" onclick="closeVideoSidebar('wolfram')">×</button>
+    <div class="video-container">
+      <div class="video-placeholder">Wolfram Role Video</div>
+    </div>
+  </div>
+  
+  <div id="video-sidebar-curve" class="video-sidebar">
+    <button class="close-video" onclick="closeVideoSidebar('curve')">×</button>
+    <div class="video-container">
+      <div class="video-placeholder">Curve Role Video</div>
+    </div>
+  </div>
+  
+  <div id="video-sidebar-creditease" class="video-sidebar">
+    <button class="close-video" onclick="closeVideoSidebar('creditease')">×</button>
+    <div class="video-container">
+      <div class="video-placeholder">CreditEase Role Video</div>
+    </div>
+  </div>
+  
+  <div id="video-sidebar-google" class="video-sidebar">
+    <button class="close-video" onclick="closeVideoSidebar('google')">×</button>
+    <div class="video-container">
+      <div class="video-placeholder">Google Role Video</div>
+    </div>
+  </div>
+  
+  <div id="video-sidebar-arrowgrass" class="video-sidebar">
+    <button class="close-video" onclick="closeVideoSidebar('arrowgrass')">×</button>
+    <div class="video-container">
+      <div class="video-placeholder">Arrowgrass Role Video</div>
+    </div>
+  </div>
+  
+  <div id="video-sidebar-ucl" class="video-sidebar">
+    <button class="close-video" onclick="closeVideoSidebar('ucl')">×</button>
+    <div class="video-container">
+      <div class="video-placeholder">UCL Role Video</div>
+    </div>
+  </div>
+  
+  <div id="video-sidebar-stan" class="video-sidebar">
+    <button class="close-video" onclick="closeVideoSidebar('stan')">×</button>
+    <div class="video-container">
+      <div class="video-placeholder">Standard Chartered Role Video</div>
+    </div>
+  </div>
+  
+  <div id="video-sidebar-florence" class="video-sidebar">
+    <button class="close-video" onclick="closeVideoSidebar('florence')">×</button>
+    <div class="video-container">
+      <div class="video-placeholder">Florence Art Course Video</div>
+    </div>
+  </div>
+  
+  <div id="video-sidebar-gecapital" class="video-sidebar">
+    <button class="close-video" onclick="closeVideoSidebar('gecapital')">×</button>
+    <div class="video-container">
+      <div class="video-placeholder">GE Capital Role Video</div>
+    </div>
+  </div>
+  
+  <div id="video-sidebar-sav" class="video-sidebar">
+    <button class="close-video" onclick="closeVideoSidebar('sav')">×</button>
+    <div class="video-container">
+      <div class="video-placeholder">SAV Capital Role Video</div>
+    </div>
+  </div>
+  
+  <div id="video-sidebar-rbs" class="video-sidebar">
+    <button class="close-video" onclick="closeVideoSidebar('rbs')">×</button>
+    <div class="video-container">
+      <div class="video-placeholder">RBS Role Video</div>
+    </div>
+  </div>
+  
+  <div id="video-sidebar-ge" class="video-sidebar">
+    <button class="close-video" onclick="closeVideoSidebar('ge')">×</button>
+    <div class="video-container">
+      <div class="video-placeholder">GE Role Video</div>
+    </div>
+  </div>
+  
+  <div id="video-sidebar-umist" class="video-sidebar">
+    <button class="close-video" onclick="closeVideoSidebar('umist')">×</button>
+    <div class="video-container">
+      <div class="video-placeholder">UMIST Role Video</div>
+    </div>
+  </div>
+  
   <!-- Modal overlay -->
   <div class="modal-overlay" id="modal-overlay"></div>
   
   <header>
-    <div class="version-control">Version 1.3 - March 2025</div>
+    <div class="version-control">Version 1.5 - March 2025</div>
     <div class="profile-container">
       <div class="profile-image">
         <img src="assets/gitProfilePic.jpeg" alt="Paul Harrald">
@@ -501,6 +696,7 @@
       <li><a href="#education">Education</a></li>
       <li><a href="#publications">Publications</a></li>
       <li><a href="#visiting">Visiting Positions</a></li>
+      <li><a href="#substack">Substack</a></li>
       <li><a href="#references">References</a></li>
     </ul>
   </nav>
@@ -529,7 +725,10 @@
           <div class="expand-icon">▼</div>
         </div>
         <div class="job-details">
-          <div class="role">Founder, incubator</div>
+          <div class="role">
+            Founder, incubator
+            <button class="role-video-button" onclick="openRoleVideoSidebar('sepiks')">▶</button>
+          </div>
           <p>Incubating and bootstrapping it until a CTO is hired and an Angel round is complete.</p>
         </div>
       </div>
@@ -545,7 +744,10 @@
           <div class="expand-icon">▼</div>
         </div>
         <div class="job-details">
-          <div class="role">Researcher</div>
+          <div class="role">
+            Researcher
+            <button class="role-video-button" onclick="openRoleVideoSidebar('wolfram')">▶</button>
+          </div>
           <p>Investigating Bohmian quantum computing and evolutionary game simulations.</p>
           <p><a href="https://community.wolfram.com/web/pharrald" target="_blank">View my work</a></p>
         </div>
@@ -562,7 +764,11 @@
           <div class="expand-icon">▼</div>
         </div>
         <div class="job-details">
-          <div class="role">Group CFO, CIO, CEO Curve Credit Ltd; Advisor</div>
+          <div class="role">
+            Group CFO, C
+Group CFO, CIO, CEO Curve Credit Ltd; Advisor
+            <button class="role-video-button" onclick="openRoleVideoSidebar('curve')">▶</button>
+          </div>
           <p>A CreditEase portfolio investment. Joined from the fund at Series C to create consumer lending businesses in US, EEA and UK; once done, then CIO and CFO, Board Director.</p>
           <ul class="responsibilities">
             <li>All regulatory liaison for establishment of consumer lending permissions in UK and EEA (as SMF1); secured $1bn senior funding and a BIN-sponsor arrangement in the US. Developed in-app lending product and built out servicing infrastructure.</li>
@@ -584,7 +790,10 @@
           <div class="expand-icon">▼</div>
         </div>
         <div class="job-details">
-          <div class="role">Managing Director, Head of European Investments</div>
+          <div class="role">
+            Managing Director, Head of European Investments
+            <button class="role-video-button" onclick="openRoleVideoSidebar('creditease')">▶</button>
+          </div>
           <p>Recruited by a former employee to lead EU/UK investments in fintech for this Chinese fund.</p>
           <ul class="responsibilities">
             <li>Leading origination of UK and European investments for the $500m fund.</li>
@@ -605,7 +814,10 @@
           <div class="expand-icon">▼</div>
         </div>
         <div class="job-details">
-          <div class="role">Risk Advisor</div>
+          <div class="role">
+            Risk Advisor
+            <button class="role-video-button" onclick="openRoleVideoSidebar('google')">▶</button>
+          </div>
           <p>Recruited by former STAN regional CEO to act as Credit and Risk Advisor to the Next Billion Users initiatives focused on financial products.</p>
           <ul class="responsibilities">
             <li>Technical consulting on uses of machine learning and AI in financial product provision</li>
@@ -627,7 +839,10 @@
           <div class="expand-icon">▼</div>
         </div>
         <div class="job-details">
-          <div class="role">Head of Alternative Lending</div>
+          <div class="role">
+            Head of Alternative Lending
+            <button class="role-video-button" onclick="openRoleVideoSidebar('arrowgrass')">▶</button>
+          </div>
           <p>Recruited into this $5bn hedge fund after a consulting contract designing risk systems.</p>
           <ul class="responsibilities">
             <li>Evaluation and structuring debt and equity transactions in fintech lending</li>
@@ -648,7 +863,10 @@
           <div class="expand-icon">▼</div>
         </div>
         <div class="job-details">
-          <div class="role">UCL visiting Professor in Computing Science</div>
+          <div class="role">
+            UCL visiting Professor in Computing Science
+            <button class="role-video-button" onclick="openRoleVideoSidebar('ucl')">▶</button>
+          </div>
           <p>Supervision of students in PhD research, <em>ad hoc</em> teaching and research in blockchain engineering, AI/ML and economic (banking) systems simulation. Advisor to the Alan Turing Institute on AI/ML in industry.</p>
         </div>
       </div>
@@ -664,7 +882,10 @@
           <div class="expand-icon">▼</div>
         </div>
         <div class="job-details">
-          <div class="role">Managing Director, Global Head Portfolio Risk, Group Head Risk Strategy, Head of Quantitative Analytics</div>
+          <div class="role">
+            Managing Director, Global Head Portfolio Risk, Group Head Risk Strategy, Head of Quantitative Analytics
+            <button class="role-video-button" onclick="openRoleVideoSidebar('stan')">▶</button>
+          </div>
           <p>Sequence of increasingly responsible positions ultimately a member of bank's Executive Management Team</p>
           <ul class="responsibilities">
             <li>Created and set Group risk appetite across all risk types, led active credit portfolio trading and issuance, set and managed ALM and liquidity risk limits. Led scenario analysis and stress testing, leading to ICAAP, ILAA.</li>
@@ -685,6 +906,10 @@
           <div class="expand-icon">▼</div>
         </div>
         <div class="job-details">
+          <div class="role">
+            Sabbatical
+            <button class="role-video-button" onclick="openRoleVideoSidebar('florence')">▶</button>
+          </div>
           <p>Sabbatical period studying fine art in Florence, Italy.</p>
         </div>
       </div>
@@ -700,7 +925,10 @@
           <div class="expand-icon">▼</div>
         </div>
         <div class="job-details">
-          <div class="role">Vice President, Analytics and Risk Strategy</div>
+          <div class="role">
+            Vice President, Analytics and Risk Strategy
+            <button class="role-video-button" onclick="openRoleVideoSidebar('gecapital')">▶</button>
+          </div>
           <p>After NewDay exit, invited back to GE.</p>
           <ul class="responsibilities">
             <li>Corporate VP role based in GE Capital headquarters in Stamford CT, with global responsibility for risk strategy and quantitative analytics.</li>
@@ -723,7 +951,10 @@
           <div class="expand-icon">▼</div>
         </div>
         <div class="job-details">
-          <div class="role">Chief Information Officer and Director of Analytics</div>
+          <div class="role">
+            Chief Information Officer and Director of Analytics
+            <button class="role-video-button" onclick="openRoleVideoSidebar('sav')">▶</button>
+          </div>
           <ul class="responsibilities">
             <li>Day 1 figure in the founding team of this successful alternative finance consumer lending start-up, through first equity raising, establishment of key commercial contracts and debt raising, on to operational success, profitability and exit.</li>
             <li>Company sold for $740m to Värde.</li>
@@ -744,7 +975,10 @@
           <div class="expand-icon">▼</div>
         </div>
         <div class="job-details">
-          <div class="role">Director, Business Analysis, then Board of Retail Direct</div>
+          <div class="role">
+            Director, Business Analysis, then Board of Retail Direct
+            <button class="role-video-button" onclick="openRoleVideoSidebar('rbs')">▶</button>
+          </div>
           <p>Initially head-hunted into leadership of a credit card joint venture with Advanta, then, after the merge with NatWest, elevated to Board of Retail Direct and executive management team of NatWest Streamline and other businesses.</p>
           <ul class="responsibilities">
             <li>Functionally responsible for IT across direct retail lending and merchant acquiring (50% of UK transactions were acquired by this business) and business analysis.</li>
@@ -766,7 +1000,10 @@
           <div class="expand-icon">▼</div>
         </div>
         <div class="job-details">
-          <div class="role">Analyst, Senior Analyst, Senior Manager, Director</div>
+          <div class="role">
+            Analyst, Senior Analyst, Senior Manager, Director
+            <button class="role-video-button" onclick="openRoleVideoSidebar('ge')">▶</button>
+          </div>
           <p>Recruited out of University role to help create a Global Modelling Team in a sequence of more senior roles in data science.</p>
         </div>
       </div>
@@ -782,9 +1019,11 @@
           <div class="expand-icon">▼</div>
         </div>
         <div class="job-details">
-          <div class="role">Lecturer with Tenure in Economics</div>
-          <p>Tenured after
-<p>Tenured after 6 months of joining the University, with a lectureship in economics, quantitative methods and game theory, included visiting positions in Max Planck Institute, UCSD and Helsinki Business School. Developed and became Director of the MSc in Business Economics</p>
+          <div class="role">
+            Lecturer with Tenure in Economics
+            <button class="role-video-button" onclick="openRoleVideoSidebar('umist')">▶</button>
+          </div>
+          <p>Tenured after 6 months of joining the University, with a lectureship in economics, quantitative methods and game theory, included visiting positions in Max Planck Institute, UCSD and Helsinki Business School. Developed and became Director of the MSc in Business Economics</p>
         </div>
       </div>
       
@@ -823,6 +1062,15 @@
         <li><strong>Canadian Institute for Advanced Research</strong>, assisting Prof Richard Lipsey in research into innovation and economic growth</li>
         <li><strong>Oxford University</strong>, Saïd Business School, lectures in fintech</li>
       </ul>
+    </section>
+    
+    <!-- Substack section -->
+    <section id="substack">
+      <button class="video-button" onclick="openVideoSidebar('substack')">▶</button>
+      <h2>Substack Articles</h2>
+      <div id="substack-articles" class="substack-container">
+        <p class="loading-text">Loading articles...</p>
+      </div>
     </section>
     
     <section id="references">
@@ -870,10 +1118,18 @@
       }
     }
     
-    // Function to open video sidebar
+    // Function to open video sidebar for sections
     function openVideoSidebar(section) {
       document.getElementById(`video-sidebar-${section}`).classList.add('active');
       document.getElementById('modal-overlay').classList.add('active');
+    }
+    
+    // Function to open video sidebar for individual roles
+    function openRoleVideoSidebar(roleId) {
+      document.getElementById(`video-sidebar-${roleId}`).classList.add('active');
+      document.getElementById('modal-overlay').classList.add('active');
+      // Prevent the click from toggling the job details
+      event.stopPropagation();
     }
     
     // Function to close video sidebar
@@ -907,6 +1163,81 @@
       // In a real implementation, we would use Google Docs API
     }
     
+    // Function to fetch and display Substack articles
+    async function fetchSubstackArticles() {
+      const substackURL = 'https://paulharrald.substack.com'; // Replace with your actual Substack URL
+      const corsProxy = 'https://api.allorigins.win/raw?url=';
+      const rssURL = `${corsProxy}${encodeURIComponent(substackURL + '/feed')}`;
+      
+      const substackContainer = document.getElementById('substack-articles');
+      
+      try {
+        const response = await fetch(rssURL);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        
+        const data = await response.text();
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(data, 'application/xml');
+        const items = xml.querySelectorAll('item');
+        
+        if (items.length === 0) {
+          substackContainer.innerHTML = '<p class="error-text">No articles found</p>';
+          return;
+        }
+        
+        substackContainer.innerHTML = '';
+        
+        // Display the latest 5 articles
+        const articlesToDisplay = Math.min(items.length, 5);
+        
+        for (let i = 0; i < articlesToDisplay; i++) {
+          const item = items[i];
+          const title = item.querySelector('title').textContent;
+          const link = item.querySelector('link').textContent;
+          const pubDate = new Date(item.querySelector('pubDate').textContent);
+          const description = item.querySelector('description').textContent;
+          
+          // Format date
+          const formattedDate = pubDate.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+          
+          // Extract excerpt - remove HTML tags and limit length
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = description;
+          const excerpt = tempDiv.textContent.trim().substring(0, 200) + '...';
+          
+          const articleCard = document.createElement('div');
+          articleCard.className = 'article-card';
+          articleCard.innerHTML = `
+            <div class="article-header">
+              <h3 class="article-title">${title}</h3>
+              <div class="article-date">${formattedDate}</div>
+            </div>
+            <div class="article-excerpt">
+              <p>${excerpt}</p>
+              <a href="${link}" target="_blank" class="article-link">Read More</a>
+            </div>
+          `;
+          
+          substackContainer.appendChild(articleCard);
+        }
+        
+      } catch (error) {
+        console.error('Error fetching Substack articles:', error);
+        substackContainer.innerHTML = `
+          <p class="error-text">
+            Could not load Substack articles. 
+            <a href="${substackURL}" target="_blank">View on Substack</a>
+          </p>
+        `;
+      }
+    }
+    
     // Initialize the page
     document.addEventListener('DOMContentLoaded', function() {
       // Open first job by default for better UX
@@ -914,6 +1245,9 @@
       if (firstJob) {
         toggleJobDetails(firstJob);
       }
+      
+      // Fetch Substack articles
+      fetchSubstackArticles();
     });
   </script>
 </body>
