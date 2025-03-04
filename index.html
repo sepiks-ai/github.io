@@ -1223,236 +1223,244 @@
         `;
       }
     }
+
+// Function to extract CV content from the current page
+function generateCVContent() {
+  // Extract data from your current CV
+  const name = document.querySelector('h1').textContent;
+  const title = document.querySelector('.title').textContent;
+  
+  // Get profile text
+  const profile = document.querySelector('#profile .content').textContent.trim();
+  
+  // Get experience items
+  const experienceItems = [];
+  document.querySelectorAll('.experience-item').forEach(item => {
+    const company = item.querySelector('.company').textContent;
+    const period = item.querySelector('.period').textContent;
+    const location = item.querySelector('.location').textContent;
     
-    // Function to extract CV content from the current page
-    function generateCVContent() {
-      // Extract data from your current CV
-      const name = document.querySelector('h1').textContent;
-      const title = document.querySelector('.title').textContent;
-      
-      // Get profile text
-      const profile = document.querySelector('#profile .content').textContent.trim();
-      
-      // Get experience items
-      const experienceItems = [];
-      document.querySelectorAll('.experience-item').forEach(item => {
-        const company = item.querySelector('.company').textContent;
-        const period = item.querySelector('.period').textContent;
-        const location = item.querySelector('.location').textContent;
-        
-        // Role text may have the video button, need to clean it
-        let role = '';
-        const roleElement = item.querySelector('.role');
-        if (roleElement) {
-          // Clone the element to avoid modifying the original
-          const roleClone = roleElement.cloneNode(true);
-          // Remove any button elements
-          const buttons = roleClone.querySelectorAll('button');
-          buttons.forEach(button => button.remove());
-          role = roleClone.textContent.trim();
-        }
-        
-        // Get responsibilities
-        const responsibilities = [];
-        const responsibilitiesList = item.querySelector('ul.responsibilities');
-        if (responsibilitiesList) {
-          responsibilitiesList.querySelectorAll('li').forEach(li => {
-            responsibilities.push(li.textContent.trim());
-          });
-        }
-        
-        // Get description paragraph
-        let description = '';
-        const descParagraph = item.querySelector('.job-details > p');
-        if (descParagraph) {
-          description = descParagraph.textContent.trim();
-        }
-        
-        experienceItems.push({
-          company,
-          period,
-          location,
-          role,
-          description,
-          responsibilities
-        });
-      });
-      
-      // Get education
-      const education = document.querySelector('#education .content').textContent.trim();
-      
-      // Get publications
-      const publications = [];
-      document.querySelectorAll('.publications-list li').forEach(item => {
-        publications.push(item.textContent.trim());
-      });
-      
-      // Get visiting positions
-      const visitingPositions = [];
-      document.querySelectorAll('#visiting ul li').forEach(item => {
-        visitingPositions.push(item.textContent.trim());
-      });
-      
-      return {
-        name,
-        title,
-        profile,
-        experience: experienceItems,
-        education,
-        publications,
-        visitingPositions
-      };
+    // Role text may have the video button, need to clean it
+    let role = '';
+    const roleElement = item.querySelector('.role');
+    if (roleElement) {
+      // Clone the element to avoid modifying the original
+      const roleClone = roleElement.cloneNode(true);
+      // Remove any button elements
+      const buttons = roleClone.querySelectorAll('button');
+      buttons.forEach(button => button.remove());
+      role = roleClone.textContent.trim();
     }
     
-    // Function to generate and download PDF
-    function generatePDF() {
-      // Create a clean, print-friendly version of the CV
-      const cvData = generateCVContent();
-      
-      // Create a new element for the PDF content
-      const pdfContent = document.createElement('div');
-      pdfContent.className = 'pdf-export';
-      pdfContent.style.width = '210mm';  // A4 width
-      pdfContent.style.padding = '10mm';
-      pdfContent.style.fontFamily = 'Arial, sans-serif';
-      pdfContent.style.color = '#333';
-      
-      // Add header with name and title
-      const header = document.createElement('div');
-      header.innerHTML = `
-        <h1 style="font-size: 28px; color: #1a237e; margin-bottom: 5px;">${cvData.name}</h1>
-        <p style="font-size: 18px; color: #283593; margin-top: 0;">${cvData.title}</p>
-        <hr style="border: 1px solid #42a5f5; margin: 15px 0 20px 0;">
-      `;
-      pdfContent.appendChild(header);
-      
-      // Add profile section
-      const profile = document.createElement('div');
-      profile.innerHTML = `
-        <h2 style="font-size: 18px; color: #1a237e; margin-bottom: 10px;">PROFILE</h2>
-        <p style="margin-bottom: 20px;">${cvData.profile}</p>
-      `;
-      pdfContent.appendChild(profile);
-      
-      // Add experience section
-      const experience = document.createElement('div');
-      experience.innerHTML = `<h2 style="font-size: 18px; color: #1a237e; margin-bottom: 15px;">EXPERIENCE</h2>`;
-      
-      cvData.experience.forEach(item => {
-        const expItem = document.createElement('div');
-        expItem.style.marginBottom = '20px';
-        
-        expItem.innerHTML = `
-          <h3 style="margin-bottom: 5px; color: #283593;">${item.company}</h3>
-          <p style="margin-top: 0; margin-bottom: 8px; font-style: italic;">
-            <strong>${item.role}</strong> | ${item.period} | ${item.location}
-          </p>
-        `;
-        
-        if (item.description) {
-          const desc = document.createElement('p');
-          desc.style.marginBottom = '8px';
-          desc.textContent = item.description;
-          expItem.appendChild(desc);
-        }
-        
-        if (item.responsibilities && item.responsibilities.length > 0) {
-          const ul = document.createElement('ul');
-          ul.style.marginTop = '5px';
-          ul.style.paddingLeft = '20px';
-          
-          item.responsibilities.forEach(resp => {
-            const li = document.createElement('li');
-            li.style.marginBottom = '3px';
-            li.textContent = resp;
-            ul.appendChild(li);
-          });
-          
-          expItem.appendChild(ul);
-        }
-        
-        experience.appendChild(expItem);
-      });
-      
-      pdfContent.appendChild(experience);
-      
-      // Add education section
-      const educationSection = document.createElement('div');
-      educationSection.innerHTML = `
-        <h2 style="font-size: 18px; color: #1a237e; margin-top: 25px; margin-bottom: 10px;">EDUCATION</h2>
-        <p>${cvData.education}</p>
-      `;
-      pdfContent.appendChild(educationSection);
-      
-      // Add publications section
-      if (cvData.publications.length > 0) {
-        const publicationsSection = document.createElement('div');
-        publicationsSection.innerHTML = `
-          <h2 style="font-size: 18px; color: #1a237e; margin-top: 25px; margin-bottom: 10px;">SELECTED PUBLICATIONS</h2>
-        `;
-        
-        const pubList = document.createElement('ul');
-        pubList.style.paddingLeft = '20px';
-        
-        cvData.publications.forEach(pub => {
-          const li = document.createElement('li');
-          li.style.marginBottom = '8px';
-          li.innerHTML = pub;
-          pubList.appendChild(li);
-        });
-        
-        publicationsSection.appendChild(pubList);
-        pdfContent.appendChild(publicationsSection);
-      }
-      
-      // Add visiting positions section
-      if (cvData.visitingPositions.length > 0) {
-        const visitingSection = document.createElement('div');
-        visitingSection.innerHTML = `
-          <h2 style="font-size: 18px; color: #1a237e; margin-top: 25px; margin-bottom: 10px;">VISITING POSITIONS</h2>
-        `;
-        
-        const visitingList = document.createElement('ul');
-        visitingList.style.paddingLeft = '20px';
-        
-        cvData.visitingPositions.forEach(pos => {
-          const li = document.createElement('li');
-          li.style.marginBottom = '5px';
-          li.innerHTML = pos;
-          visitingList.appendChild(li);
-        });
-        
-        visitingSection.appendChild(visitingList);
-        pdfContent.appendChild(visitingSection);
-      }
-      
-      // Add footer
-      const footer = document.createElement('div');
-      footer.style.marginTop = '30px';
-      footer.style.textAlign = 'center';
-      footer.style.fontSize = '12px';
-      footer.style.color = '#666';
-      footer.innerHTML = `Generated on ${new Date().toLocaleDateString()}`;
-      pdfContent.appendChild(footer);
-      
-      // Temporarily add to document (hidden), convert to PDF, then remove
-      pdfContent.style.position = 'absolute';
-      pdfContent.style.left = '-9999px';
-      document.body.appendChild(pdfContent);
-      
-      const opt = {
-        margin: [10, 10, 10, 10],
-        filename: 'paul-harrald-cv.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      };
-      
-      // Generate PDF and download
-      html2pdf().set(opt).from(pdfContent).save().then(() => {
-        document.body.removeChild(pdfContent);
+    // Get responsibilities
+    const responsibilities = [];
+    const responsibilitiesList = item.querySelector('ul.responsibilities');
+    if (responsibilitiesList) {
+      responsibilitiesList.querySelectorAll('li').forEach(li => {
+        responsibilities.push(li.textContent.trim());
       });
     }
+    
+    // Get description paragraph
+    let description = '';
+    const descParagraph = item.querySelector('.job-details > p');
+    if (descParagraph) {
+      description = descParagraph.textContent.trim();
+    }
+    
+    experienceItems.push({
+      company,
+      period,
+      location,
+      role,
+      description,
+      responsibilities
+    });
+  });
+  
+  // Get education
+  const education = document.querySelector('#education .content').textContent.trim();
+  
+  // Get publications
+  const publications = [];
+  document.querySelectorAll('.publications-list li').forEach(item => {
+    publications.push(item.textContent.trim());
+  });
+  
+  // Get visiting positions
+  const visitingPositions = [];
+  document.querySelectorAll('#visiting ul li').forEach(item => {
+    visitingPositions.push(item.textContent.trim());
+  });
+  
+  return {
+    name,
+    title,
+    profile,
+    experience: experienceItems,
+    education,
+    publications,
+    visitingPositions
+  };
+}
+      
+      function generatePDF() {
+  // Create a clean, print-friendly version of the CV
+  const cvData = generateCVContent();
+  
+  // Create visible content for PDF
+  const pdfContent = document.createElement('div');
+  pdfContent.className = 'pdf-export';
+  pdfContent.style.width = '100%';
+  pdfContent.style.padding = '20px';
+  pdfContent.style.backgroundColor = 'white';
+  pdfContent.style.fontFamily = 'Arial, sans-serif';
+  pdfContent.style.color = '#333';
+  pdfContent.style.position = 'fixed';
+  pdfContent.style.top = '0';
+  pdfContent.style.left = '0';
+  pdfContent.style.zIndex = '9999';
+  pdfContent.style.overflow = 'auto';
+  pdfContent.style.height = '100%';
+  
+  // Add header with name and title
+  const header = document.createElement('div');
+  header.innerHTML = `
+    <h1 style="font-size: 28px; color: #1a237e; margin-bottom: 5px;">${cvData.name}</h1>
+    <p style="font-size: 18px; color: #283593; margin-top: 0;">${cvData.title}</p>
+    <hr style="border: 1px solid #42a5f5; margin: 15px 0 20px 0;">
+  `;
+  pdfContent.appendChild(header);
+  
+  // Add profile section
+  const profile = document.createElement('div');
+  profile.innerHTML = `
+    <h2 style="font-size: 18px; color: #1a237e; margin-bottom: 10px;">PROFILE</h2>
+    <p style="margin-bottom: 20px;">${cvData.profile}</p>
+  `;
+  pdfContent.appendChild(profile);
+  
+  // Add experience section
+  const experience = document.createElement('div');
+  experience.innerHTML = `<h2 style="font-size: 18px; color: #1a237e; margin-bottom: 15px;">EXPERIENCE</h2>`;
+  
+  cvData.experience.forEach(item => {
+    const expItem = document.createElement('div');
+    expItem.style.marginBottom = '20px';
+    
+    expItem.innerHTML = `
+      <h3 style="margin-bottom: 5px; color: #283593;">${item.company}</h3>
+      <p style="margin-top: 0; margin-bottom: 8px; font-style: italic;">
+        <strong>${item.role}</strong> | ${item.period} | ${item.location}
+      </p>
+    `;
+    
+    if (item.description) {
+      const desc = document.createElement('p');
+      desc.style.marginBottom = '8px';
+      desc.textContent = item.description;
+      expItem.appendChild(desc);
+    }
+    
+    if (item.responsibilities && item.responsibilities.length > 0) {
+      const ul = document.createElement('ul');
+      ul.style.marginTop = '5px';
+      ul.style.paddingLeft = '20px';
+      
+      item.responsibilities.forEach(resp => {
+        const li = document.createElement('li');
+        li.style.marginBottom = '3px';
+        li.textContent = resp;
+        ul.appendChild(li);
+      });
+      
+      expItem.appendChild(ul);
+    }
+    
+    experience.appendChild(expItem);
+  });
+  
+  pdfContent.appendChild(experience);
+  
+  // Add education section
+  const educationSection = document.createElement('div');
+  educationSection.innerHTML = `
+    <h2 style="font-size: 18px; color: #1a237e; margin-top: 25px; margin-bottom: 10px;">EDUCATION</h2>
+    <p>${cvData.education}</p>
+  `;
+  pdfContent.appendChild(educationSection);
+  
+  // Add publications section
+  if (cvData.publications.length > 0) {
+    const publicationsSection = document.createElement('div');
+    publicationsSection.innerHTML = `
+      <h2 style="font-size: 18px; color: #1a237e; margin-top: 25px; margin-bottom: 10px;">SELECTED PUBLICATIONS</h2>
+    `;
+    
+    const pubList = document.createElement('ul');
+    pubList.style.paddingLeft = '20px';
+    
+    cvData.publications.forEach(pub => {
+      const li = document.createElement('li');
+      li.style.marginBottom = '8px';
+      li.innerHTML = pub;
+      pubList.appendChild(li);
+    });
+    
+    publicationsSection.appendChild(pubList);
+    pdfContent.appendChild(publicationsSection);
+  }
+  
+  // Add visiting positions section
+  if (cvData.visitingPositions.length > 0) {
+    const visitingSection = document.createElement('div');
+    visitingSection.innerHTML = `
+      <h2 style="font-size: 18px; color: #1a237e; margin-top: 25px; margin-bottom: 10px;">VISITING POSITIONS</h2>
+    `;
+    
+    const visitingList = document.createElement('ul');
+    visitingList.style.paddingLeft = '20px';
+    
+    cvData.visitingPositions.forEach(pos => {
+      const li = document.createElement('li');
+      li.style.marginBottom = '5px';
+      li.innerHTML = pos;
+      visitingList.appendChild(li);
+    });
+    
+    visitingSection.appendChild(visitingList);
+    pdfContent.appendChild(visitingSection);
+  }
+  
+  // Add footer
+  const footer = document.createElement('div');
+  footer.style.marginTop = '30px';
+  footer.style.textAlign = 'center';
+  footer.style.fontSize = '12px';
+  footer.style.color = '#666';
+  footer.innerHTML = `Generated on ${new Date().toLocaleDateString()}`;
+  pdfContent.appendChild(footer);
+  
+  // Add to document visibly, then convert to PDF, then remove
+  document.body.appendChild(pdfContent);
+  
+  const opt = {
+    margin: [10, 10, 10, 10],
+    filename: 'paul-harrald-cv.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true, logging: true },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+  
+  // Generate PDF and download
+  html2pdf().set(opt).from(pdfContent).save().then(() => {
+    document.body.removeChild(pdfContent);
+  }).catch(error => {
+    console.error('Error generating PDF:', error);
+    alert('There was an error generating the PDF. Please try again.');
+    document.body.removeChild(pdfContent);
+  });
+}
     
     // Function to generate and download Word document
     function generateWord() {
