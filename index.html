@@ -6,7 +6,7 @@
   <title>Paul Harrald - Interactive CV</title>
   <!-- Added libraries for export functionality -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.8.2/docx.js"></script>
+  <script src="https://unpkg.com/docx@7.8.2/build/index.js"></script>
   <style>
     :root {
       --primary-color: #1a237e;
@@ -518,6 +518,10 @@
       padding: 2rem;
     }
   </style>
+
+<script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
 </head>
 <body>
   <!-- Section video sidebars -->
@@ -1304,330 +1308,256 @@ function generateCVContent() {
   };
 }
       
-      function generatePDF() {
-  // Create a clean, print-friendly version of the CV
-  const cvData = generateCVContent();
-  
-  // Create visible content for PDF
-  const pdfContent = document.createElement('div');
-  pdfContent.className = 'pdf-export';
-  pdfContent.style.width = '100%';
-  pdfContent.style.padding = '20px';
-  pdfContent.style.backgroundColor = 'white';
-  pdfContent.style.fontFamily = 'Arial, sans-serif';
-  pdfContent.style.color = '#333';
-  pdfContent.style.position = 'fixed';
-  pdfContent.style.top = '0';
-  pdfContent.style.left = '0';
-  pdfContent.style.zIndex = '9999';
-  pdfContent.style.overflow = 'auto';
-  pdfContent.style.height = '100%';
-  
-  // Add header with name and title
-  const header = document.createElement('div');
-  header.innerHTML = `
-    <h1 style="font-size: 28px; color: #1a237e; margin-bottom: 5px;">${cvData.name}</h1>
-    <p style="font-size: 18px; color: #283593; margin-top: 0;">${cvData.title}</p>
-    <hr style="border: 1px solid #42a5f5; margin: 15px 0 20px 0;">
-  `;
-  pdfContent.appendChild(header);
-  
-  // Add profile section
-  const profile = document.createElement('div');
-  profile.innerHTML = `
-    <h2 style="font-size: 18px; color: #1a237e; margin-bottom: 10px;">PROFILE</h2>
-    <p style="margin-bottom: 20px;">${cvData.profile}</p>
-  `;
-  pdfContent.appendChild(profile);
-  
-  // Add experience section
-  const experience = document.createElement('div');
-  experience.innerHTML = `<h2 style="font-size: 18px; color: #1a237e; margin-bottom: 15px;">EXPERIENCE</h2>`;
-  
-  cvData.experience.forEach(item => {
-    const expItem = document.createElement('div');
-    expItem.style.marginBottom = '20px';
-    
-    expItem.innerHTML = `
-      <h3 style="margin-bottom: 5px; color: #283593;">${item.company}</h3>
-      <p style="margin-top: 0; margin-bottom: 8px; font-style: italic;">
-        <strong>${item.role}</strong> | ${item.period} | ${item.location}
-      </p>
-    `;
-    
-    if (item.description) {
-      const desc = document.createElement('p');
-      desc.style.marginBottom = '8px';
-      desc.textContent = item.description;
-      expItem.appendChild(desc);
-    }
-    
-    if (item.responsibilities && item.responsibilities.length > 0) {
-      const ul = document.createElement('ul');
-      ul.style.marginTop = '5px';
-      ul.style.paddingLeft = '20px';
+function generatePDF() {
+  // Create a simplified version of the CV for PDF export
+  const element = document.createElement("div");
+  element.innerHTML = `
+    <div style="padding: 40px; font-family: Arial; max-width: 800px; margin: 0 auto;">
+      <h1 style="color: #1a237e;">${document.querySelector('h1').textContent}</h1>
+      <p style="font-size: 18px; margin-bottom: 20px;">${document.querySelector('.title').textContent}</p>
+      <hr style="border: 1px solid #42a5f5; margin: 20px 0;">
       
-      item.responsibilities.forEach(resp => {
-        const li = document.createElement('li');
-        li.style.marginBottom = '3px';
-        li.textContent = resp;
-        ul.appendChild(li);
-      });
+      <h2 style="color: #1a237e;">PROFILE</h2>
+      <p>${document.querySelector('#profile .content').textContent.trim()}</p>
       
-      expItem.appendChild(ul);
-    }
-    
-    experience.appendChild(expItem);
-  });
-  
-  pdfContent.appendChild(experience);
-  
-  // Add education section
-  const educationSection = document.createElement('div');
-  educationSection.innerHTML = `
-    <h2 style="font-size: 18px; color: #1a237e; margin-top: 25px; margin-bottom: 10px;">EDUCATION</h2>
-    <p>${cvData.education}</p>
+      <h2 style="color: #1a237e; margin-top: 30px;">EXPERIENCE</h2>
+      ${Array.from(document.querySelectorAll('.experience-item')).map(item => `
+        <div style="margin-bottom: 15px;">
+          <h3 style="margin-bottom: 5px;">${item.querySelector('.company').textContent}</h3>
+          <p style="font-style: italic;">${item.querySelector('.role').textContent.replace('▶', '').trim()} | 
+             ${item.querySelector('.period').textContent} | 
+             ${item.querySelector('.location').textContent}</p>
+          ${item.querySelector('.job-details > p') ? 
+            `<p>${item.querySelector('.job-details > p').textContent}</p>` : ''}
+          ${item.querySelector('ul.responsibilities') ? 
+            `<ul>${Array.from(item.querySelectorAll('ul.responsibilities li'))
+              .map(li => `<li>${li.textContent}</li>`).join('')}</ul>` : ''}
+        </div>
+      `).join('')}
+      
+      <h2 style="color: #1a237e; margin-top: 30px;">EDUCATION</h2>
+      <p>${document.querySelector('#education .content').textContent.trim()}</p>
+      
+      <h2 style="color: #1a237e; margin-top: 30px;">SELECTED PUBLICATIONS</h2>
+      <ul>
+        ${Array.from(document.querySelectorAll('.publications-list li'))
+          .map(li => `<li>${li.textContent}</li>`).join('')}
+      </ul>
+      
+      <h2 style="color: #1a237e; margin-top: 30px;">VISITING POSITIONS</h2>
+      <ul>
+        ${Array.from(document.querySelectorAll('#visiting ul li'))
+          .map(li => `<li>${li.textContent}</li>`).join('')}
+      </ul>
+    </div>
   `;
-  pdfContent.appendChild(educationSection);
   
-  // Add publications section
-  if (cvData.publications.length > 0) {
-    const publicationsSection = document.createElement('div');
-    publicationsSection.innerHTML = `
-      <h2 style="font-size: 18px; color: #1a237e; margin-top: 25px; margin-bottom: 10px;">SELECTED PUBLICATIONS</h2>
-    `;
-    
-    const pubList = document.createElement('ul');
-    pubList.style.paddingLeft = '20px';
-    
-    cvData.publications.forEach(pub => {
-      const li = document.createElement('li');
-      li.style.marginBottom = '8px';
-      li.innerHTML = pub;
-      pubList.appendChild(li);
+  document.body.appendChild(element);
+  
+  window.scrollTo(0, 0);
+  html2canvas(element, {
+    scale: 2,
+    useCORS: true,
+    logging: false
+  }).then(canvas => {
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new window.jspdf.jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
     });
     
-    publicationsSection.appendChild(pubList);
-    pdfContent.appendChild(publicationsSection);
-  }
-  
-  // Add visiting positions section
-  if (cvData.visitingPositions.length > 0) {
-    const visitingSection = document.createElement('div');
-    visitingSection.innerHTML = `
-      <h2 style="font-size: 18px; color: #1a237e; margin-top: 25px; margin-bottom: 10px;">VISITING POSITIONS</h2>
-    `;
+    const imgProps = pdf.getImageProperties(imgData);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
     
-    const visitingList = document.createElement('ul');
-    visitingList.style.paddingLeft = '20px';
+    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+    pdf.save('paul-harrald-cv.pdf');
     
-    cvData.visitingPositions.forEach(pos => {
-      const li = document.createElement('li');
-      li.style.marginBottom = '5px';
-      li.innerHTML = pos;
-      visitingList.appendChild(li);
-    });
-    
-    visitingSection.appendChild(visitingList);
-    pdfContent.appendChild(visitingSection);
-  }
-  
-  // Add footer
-  const footer = document.createElement('div');
-  footer.style.marginTop = '30px';
-  footer.style.textAlign = 'center';
-  footer.style.fontSize = '12px';
-  footer.style.color = '#666';
-  footer.innerHTML = `Generated on ${new Date().toLocaleDateString()}`;
-  pdfContent.appendChild(footer);
-  
-  // Add to document visibly, then convert to PDF, then remove
-  document.body.appendChild(pdfContent);
-  
-  const opt = {
-    margin: [10, 10, 10, 10],
-    filename: 'paul-harrald-cv.pdf',
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true, logging: true },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  };
-  
-  // Generate PDF and download
-  html2pdf().set(opt).from(pdfContent).save().then(() => {
-    document.body.removeChild(pdfContent);
-  }).catch(error => {
-    console.error('Error generating PDF:', error);
-    alert('There was an error generating the PDF. Please try again.');
-    document.body.removeChild(pdfContent);
+    document.body.removeChild(element);
   });
 }
-    
-    // Function to generate and download Word document
-    function generateWord() {
-      const cvData = generateCVContent();
+  
+  // Add this helper function before generateWord
+function checkDocxLoaded() {
+  if (typeof docx === 'undefined') {
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/docx@7.8.2/build/index.js';
+    script.onload = function() {
+      alert('Library loaded. Please try again.');
+    };
+    document.head.appendChild(script);
+    return false;
+  }
+  return true;
+}
+
+// Your modified generateWord function with the check added
+function generateWord() {
+  if (!checkDocxLoaded()) {
+    return;
+  }
+  
+  const cvData = generateCVContent();
+  
+  // Create a new Document
+  const doc = new docx.Document({
+    sections: [{
+      properties: {},
+      children: [
+        // Header with name and title
+        new docx.Paragraph({
+          text: cvData.name,
+          heading: docx.HeadingLevel.HEADING_1,
+          thematicBreak: true,
+          spacing: { after: 200 }
+        }),
+        new docx.Paragraph({
+          text: cvData.title,
+          spacing: { after: 400 }
+        }),
+        
+        // Profile section
+        new docx.Paragraph({
+          text: "PROFILE",
+          heading: docx.HeadingLevel.HEADING_2,
+          spacing: { before: 400, after: 200 }
+        }),
+        new docx.Paragraph({
+          text: cvData.profile,
+          spacing: { after: 400 }
+        })
+      ]
+    }]
+  });
+  
+  // Add experience section
+  doc.addSection({
+    properties: {},
+    children: [
+      new docx.Paragraph({
+        text: "EXPERIENCE",
+        heading: docx.HeadingLevel.HEADING_2,
+        spacing: { before: 400, after: 200 }
+      }),
       
-      // Ensure docx is available
-      if (typeof docx === 'undefined') {
-        alert('Error: docx library not loaded. Please try again later.');
-        return;
-      }
-      
-      // Create a new Document
-      const doc = new docx.Document({
-        sections: [{
-          properties: {},
-          children: [
-            // Header with name and title
+      // Add each experience item
+      ...cvData.experience.flatMap(exp => {
+        const paragraphs = [
+          new docx.Paragraph({
+            text: exp.company,
+            heading: docx.HeadingLevel.HEADING_3,
+            spacing: { before: 300, after: 100 }
+          }),
+          new docx.Paragraph({
+            children: [
+              new docx.TextRun({
+                text: `${exp.role} | ${exp.period} | ${exp.location}`,
+                italics: true
+              })
+            ],
+            spacing: { after: 200 }
+          })
+        ];
+        
+        // Add description if available
+        if (exp.description) {
+          paragraphs.push(
             new docx.Paragraph({
-              text: cvData.name,
-              heading: docx.HeadingLevel.HEADING_1,
-              thematicBreak: true,
+              text: exp.description,
               spacing: { after: 200 }
-            }),
-            new docx.Paragraph({
-              text: cvData.title,
-              spacing: { after: 400 }
-            }),
-            
-            // Profile section
-            new docx.Paragraph({
-              text: "PROFILE",
-              heading: docx.HeadingLevel.HEADING_2,
-              spacing: { before: 400, after: 200 }
-            }),
-            new docx.Paragraph({
-              text: cvData.profile,
-              spacing: { after: 400 }
             })
-          ]
-        }]
-      });
-      
-      // Add experience section
-      doc.addSection({
-        properties: {},
-        children: [
-          new docx.Paragraph({
-            text: "EXPERIENCE",
-            heading: docx.HeadingLevel.HEADING_2,
-            spacing: { before: 400, after: 200 }
-          }),
-          
-          // Add each experience item
-          ...cvData.experience.flatMap(exp => {
-            const paragraphs = [
+          );
+        }
+        
+        // Add responsibilities as bullet points
+        if (exp.responsibilities && exp.responsibilities.length > 0) {
+          exp.responsibilities.forEach(resp => {
+            paragraphs.push(
               new docx.Paragraph({
-                text: exp.company,
-                heading: docx.HeadingLevel.HEADING_3,
-                spacing: { before: 300, after: 100 }
-              }),
-              new docx.Paragraph({
-                children: [
-                  new docx.TextRun({
-                    text: `${exp.role} | ${exp.period} | ${exp.location}`,
-                    italics: true
-                  })
-                ],
-                spacing: { after: 200 }
-              })
-            ];
-            
-            // Add description if available
-            if (exp.description) {
-              paragraphs.push(
-                new docx.Paragraph({
-                  text: exp.description,
-                  spacing: { after: 200 }
-                })
-              );
-            }
-            
-            // Add responsibilities as bullet points
-            if (exp.responsibilities && exp.responsibilities.length > 0) {
-              exp.responsibilities.forEach(resp => {
-                paragraphs.push(
-                  new docx.Paragraph({text: resp,
-                    bullet: { level: 0 },
-                    spacing: { after: 100 }
-                  })
-                );
-              });
-            }
-            
-            return paragraphs;
-          })
-        ]
-      });
-      
-      // Add education section
-      doc.addSection({
-        properties: {},
-        children: [
-          new docx.Paragraph({
-            text: "EDUCATION",
-            heading: docx.HeadingLevel.HEADING_2,
-            spacing: { before: 400, after: 200 }
-          }),
-          new docx.Paragraph({
-            text: cvData.education,
-            spacing: { after: 400 }
-          })
-        ]
-      });
-      
-      // Add publications section if available
-      if (cvData.publications.length > 0) {
-        doc.addSection({
-          properties: {},
-          children: [
-            new docx.Paragraph({
-              text: "SELECTED PUBLICATIONS",
-              heading: docx.HeadingLevel.HEADING_2,
-              spacing: { before: 400, after: 200 }
-            }),
-            ...cvData.publications.map(pub => 
-              new docx.Paragraph({
-                text: pub,
-                bullet: { level: 0 },
-                spacing: { after: 200 }
-              })
-            )
-          ]
-        });
-      }
-      
-      // Add visiting positions section if available
-      if (cvData.visitingPositions.length > 0) {
-        doc.addSection({
-          properties: {},
-          children: [
-            new docx.Paragraph({
-              text: "VISITING POSITIONS",
-              heading: docx.HeadingLevel.HEADING_2,
-              spacing: { before: 400, after: 200 }
-            }),
-            ...cvData.visitingPositions.map(pos => 
-              new docx.Paragraph({
-                text: pos,
+                text: resp,
                 bullet: { level: 0 },
                 spacing: { after: 100 }
               })
-            )
-          ]
-        });
-      }
-      
-      // Generate and download the document
-      docx.Packer.toBlob(doc).then(blob => {
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'paul-harrald-cv.docx';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      });
-    }
+            );
+          });
+        }
+        
+        return paragraphs;
+      })
+    ]
+  });
+  
+  // Add education section
+  doc.addSection({
+    properties: {},
+    children: [
+      new docx.Paragraph({
+        text: "EDUCATION",
+        heading: docx.HeadingLevel.HEADING_2,
+        spacing: { before: 400, after: 200 }
+      }),
+      new docx.Paragraph({
+        text: cvData.education,
+        spacing: { after: 400 }
+      })
+    ]
+  });
+  
+  // Add publications section if available
+  if (cvData.publications.length > 0) {
+    doc.addSection({
+      properties: {},
+      children: [
+        new docx.Paragraph({
+          text: "SELECTED PUBLICATIONS",
+          heading: docx.HeadingLevel.HEADING_2,
+          spacing: { before: 400, after: 200 }
+        }),
+        ...cvData.publications.map(pub => 
+          new docx.Paragraph({
+            text: pub,
+            bullet: { level: 0 },
+            spacing: { after: 200 }
+          })
+        )
+      ]
+    });
+  }
+  
+  // Add visiting positions section if available
+  if (cvData.visitingPositions.length > 0) {
+    doc.addSection({
+      properties: {},
+      children: [
+        new docx.Paragraph({
+          text: "VISITING POSITIONS",
+          heading: docx.HeadingLevel.HEADING_2,
+          spacing: { before: 400, after: 200 }
+        }),
+        ...cvData.visitingPositions.map(pos => 
+          new docx.Paragraph({
+            text: pos,
+            bullet: { level: 0 },
+            spacing: { after: 100 }
+          })
+        )
+      ]
+    });
+  }
+  
+  // Generate and download the document
+  docx.Packer.toBlob(doc).then(blob => {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'paul-harrald-cv.docx';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  });
+}
+  
     
     // Function to open document in Google Docs (simplified version)
     function openInGoogleDocs() {
