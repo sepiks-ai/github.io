@@ -4,18 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Paul Harrald - Interactive CV</title>
-  <!-- Added libraries for export functionality -->
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Libraries for export functionality -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <!-- DOCX.js Library for Word export -->
   <script src="https://unpkg.com/docx@7.8.2/build/index.js"></script>
+  
   <style>
     :root {
       --primary-color: #1a237e;
       --secondary-color: #283593;
       --accent-color: #42a5f5;
+      --accent-hover: #1e88e5;
       --light-bg: #f5f5f5;
       --dark-text: #333;
       --light-text: #f5f5f5;
       --border-color: #e0e0e0;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      --transition: all 0.3s ease;
     }
     
     * {
@@ -82,25 +92,25 @@
       position: relative;
       display: inline-block;
       margin-top: 1rem;
-      z-index: 101; /* Higher than the navbar z-index */
+      z-index: 101;
     }
     
     .download-btn {
       background-color: var(--accent-color);
       color: white;
       padding: 0.75rem 1.5rem;
-      border-radius: 4px;
+      border-radius: var(--border-radius);
       text-decoration: none;
       font-weight: bold;
       display: inline-block;
-      transition: all 0.3s ease;
+      transition: var(--transition);
       border: none;
       cursor: pointer;
       font-size: 1rem;
     }
     
     .download-btn:hover {
-      background-color: #1e88e5;
+      background-color: var(--accent-hover);
       transform: translateY(-2px);
     }
     
@@ -109,9 +119,9 @@
       position: absolute;
       background-color: white;
       min-width: 160px;
-      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-      z-index: 101; /* Higher than the navbar z-index */
-      border-radius: 4px;
+      box-shadow: var(--box-shadow);
+      z-index: 101;
+      border-radius: var(--border-radius);
       overflow: hidden;
       left: 0;
       margin-top: 5px;
@@ -138,7 +148,7 @@
       background-color: var(--secondary-color);
       position: sticky;
       top: 0;
-      z-index: 100; /* Lower than dropdown z-index */
+      z-index: 100;
     }
     
     nav ul {
@@ -147,6 +157,7 @@
       list-style: none;
       max-width: 1200px;
       margin: 0 auto;
+      flex-wrap: wrap;
     }
     
     nav ul li {
@@ -158,7 +169,7 @@
       color: var(--light-text);
       text-decoration: none;
       padding: 1rem 1.5rem;
-      transition: all 0.3s ease;
+      transition: var(--transition);
     }
     
     nav ul li a:hover {
@@ -175,8 +186,8 @@
       margin-bottom: 3rem;
       padding: 2rem;
       background-color: white;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
       position: relative;
     }
     
@@ -213,12 +224,12 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: var(--transition);
       z-index: 10;
     }
     
     .video-button:hover {
-      background-color: #1e88e5;
+      background-color: var(--accent-hover);
       transform: scale(1.1);
     }
     
@@ -235,11 +246,11 @@
       font-size: 10px;
       margin-left: 10px;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: var(--transition);
     }
     
     .role-video-button:hover {
-      background-color: #1e88e5;
+      background-color: var(--accent-hover);
       transform: scale(1.1);
     }
     
@@ -288,12 +299,12 @@
       align-items: center;
       justify-content: center;
       font-size: 1.2rem;
-      border-radius: 8px;
+      border-radius: var(--border-radius);
     }
     
     .experience-item {
       border: 1px solid var(--border-color);
-      border-radius: 8px;
+      border-radius: var(--border-radius);
       margin-bottom: 1.5rem;
       overflow: hidden;
     }
@@ -341,14 +352,14 @@
       transition: transform 0.3s ease;
     }
     
-    .expand-icon.active {
+    .expand-icon.active i {
       transform: rotate(180deg);
     }
     
     .job-details {
       max-height: 0;
       overflow: hidden;
-      transition: max-height 0.5s ease;
+      transition: max-height 0.5s ease, padding 0.3s ease;
       padding: 0 1.5rem;
     }
     
@@ -398,7 +409,7 @@
     
     .external-link {
       background-color: var(--light-bg);
-      border-radius: 8px;
+      border-radius: var(--border-radius);
       padding: 1rem;
       margin-right: 1rem;
       margin-bottom: 1rem;
@@ -406,12 +417,12 @@
       align-items: center;
       text-decoration: none;
       color: var(--primary-color);
-      transition: all 0.3s ease;
+      transition: var(--transition);
     }
     
     .external-link:hover {
       transform: translateY(-3px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      box-shadow: var(--box-shadow);
     }
     
     .icon {
@@ -462,7 +473,7 @@
     
     .article-card {
       border: 1px solid var(--border-color);
-      border-radius: 8px;
+      border-radius: var(--border-radius);
       overflow: hidden;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
@@ -517,864 +528,328 @@
       color: #e74c3c;
       padding: 2rem;
     }
-/* Tab Navigation Styles */
-.tab-container {
-  width: 100%;
-  margin-bottom: 2rem;
-}
-
-.tab-navigation {
-  display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  margin-bottom: 1rem;
-  border-bottom: 2px solid var(--border-color);
-  -ms-overflow-style: none;  /* Hide scrollbar in IE and Edge */
-  scrollbar-width: none;  /* Hide scrollbar in Firefox */
-}
-
-.tab-navigation::-webkit-scrollbar {
-  display: none; /* Hide scrollbar in Chrome, Safari and Opera */
-}
-
-.tab-button {
-  padding: 12px 24px;
-  background: none;
-  border: none;
-  color: var(--dark-text);
-  font-weight: 500;
-  cursor: pointer;
-  white-space: nowrap;
-  position: relative;
-  transition: all 0.3s ease;
-}
-
-.tab-button:hover {
-  color: var(--accent-color);
-}
-
-.tab-button.active {
-  color: var(--accent-color);
-}
-
-.tab-button.active::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background-color: var(--accent-color);
-}
-
-.tab-content {
-  display: none;
-}
-
-.tab-content.active {
-  display: block;
-}
-
-/* Personal History section styles */
-.biography-section {
-  margin-bottom: 2rem;
-}
-
-.biography-text {
-  margin-bottom: 1.5rem;
-  line-height: 1.8;
-}
-
-.personal-links {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-top: 1.5rem;
-}
-
-.links-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.personal-link {
-  display: flex;
-  align-items: center;
-  padding: 0.75rem 1.25rem;
-  background-color: var(--light-bg);
-  border-radius: 8px;
-  text-decoration: none;
-  color: var(--primary-color);
-  transition: all 0.3s ease;
-}
-
-.personal-link:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.personal-link-icon {
-  margin-right: 0.5rem;
-  font-size: 1.2rem;
-}
-
-/* Photo gallery styles */
-.photo-gallery {
-  margin-top: 2rem;
-}
-
-.gallery-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.gallery-item {
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  transition: transform 0.3s ease;
-}
-
-.gallery-item:hover {
-  transform: scale(1.03);
-}
-
-.gallery-item img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-}
-
-.gallery-caption {
-  padding: 0.5rem;
-  background-color: var(--light-bg);
-  font-size: 0.9rem;
-}
+    
+    /* Tab Navigation Styles */
+    .tab-navigation {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid var(--border-color);
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    
+    .tab-navigation::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .tab-button {
+      padding: 12px 24px;
+      background: none;
+      border: none;
+      color: var(--dark-text);
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      position: relative;
+      transition: var(--transition);
+    }
+    
+    .tab-button:hover {
+      color: var(--accent-color);
+    }
+    
+    .tab-button.active {
+      color: var(--accent-color);
+    }
+    
+    .tab-button.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background-color: var(--accent-color);
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    /* Personal History section styles */
+    .biography-section {
+      margin-bottom: 2rem;
+    }
+    
+    .biography-text {
+      margin-bottom: 1.5rem;
+      line-height: 1.8;
+    }
+    
+    .personal-links {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    
+    .links-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    
+    .personal-link {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1.25rem;
+      background-color: var(--light-bg);
+      border-radius: var(--border-radius);
+      text-decoration: none;
+      color: var(--primary-color);
+      transition: var(--transition);
+    }
+    
+    .personal-link:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--box-shadow);
+    }
+    
+    .personal-link-icon {
+      margin-right: 0.5rem;
+      font-size: 1.2rem;
+    }
+    
+    /* Photo gallery styles */
+    .photo-gallery {
+      margin-top: 2rem;
+    }
+    
+    .gallery-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    
+    .gallery-item {
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      box-shadow: var(--box-shadow);
+      transition: transform 0.3s ease;
+    }
+    
+    .gallery-item:hover {
+      transform: scale(1.03);
+    }
+    
+    .gallery-item img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+    
+    .gallery-caption {
+      padding: 0.5rem;
+      background-color: var(--light-bg);
+      font-size: 0.9rem;
+    }
+    
+    /* Responsive styles */
+    @media (max-width: 991px) {
+      nav ul {
+        flex-wrap: wrap;
+      }
+      
+      nav ul li a {
+        padding: 0.75rem 1rem;
+      }
+      
+      .video-sidebar {
+        width: 320px;
+      }
+    }
+    
+    @media (max-width: 767px) {
+      main {
+        padding: 0 1rem;
+      }
+      
+      section {
+        padding: 1.5rem;
+      }
+      
+      .external-links {
+        flex-direction: column;
+      }
+      
+      .external-link {
+        margin-right: 0;
+      }
+    }
+    
+    @media (max-width: 575px) {
+      .profile-image {
+        width: 120px;
+        height: 120px;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .video-sidebar {
+        width: 100%;
+      }
+      
+      .experience-item .job-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .experience-item .expand-icon {
+        position: absolute;
+        right: 1.5rem;
+        top: 1.5rem;
+      }
+    }
   </style>
-
-<script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-<script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-
 </head>
 <body>
-  <!-- Section video sidebars -->
-  <div id="video-sidebar-profile" class="video-sidebar">
-    <button class="close-video" onclick="closeVideoSidebar('profile')">×</button>
+  <!-- Video Sidebar -->
+  <div id="video-sidebar" class="video-sidebar">
+    <button class="close-video" aria-label="Close video"><i class="fas fa-times"></i></button>
     <div class="video-container">
-      <div class="video-placeholder">Profile Overview Video</div>
+      <div class="video-placeholder" id="video-content">Video Content</div>
     </div>
-  </div>
-  
-  <div id="video-sidebar-experience" class="video-sidebar">
-    <button class="close-video" onclick="closeVideoSidebar('experience')">×</button>
-    <div class="video-container">
-      <div class="video-placeholder">Experience Overview Video</div>
-    </div>
-  </div>
-  
-  <div id="video-sidebar-education" class="video-sidebar">
-    <button class="close-video" onclick="closeVideoSidebar('education')">×</button>
-    <div class="video-container">
-      <div class="video-placeholder">Education Overview Video</div>
-    </div>
-  </div>
-  
-  <div id="video-sidebar-publications" class="video-sidebar">
-    <button class="close-video" onclick="closeVideoSidebar('publications')">×</button>
-    <div class="video-container">
-      <div class="video-placeholder">Publications Overview Video</div>
-    </div>
-  </div>
-  
-  <div id="video-sidebar-visiting" class="video-sidebar">
-    <button class="close-video" onclick="closeVideoSidebar('visiting')">×</button>
-    <div class="video-container">
-      <div class="video-placeholder">Visiting Positions Overview Video</div>
-    </div>
-  </div>
-  
-  <div id="video-sidebar-substack" class="video-sidebar">
-    <button class="close-video" onclick="closeVideoSidebar('substack')">×</button>
-    <div class="video-container">
-      <div class="video-placeholder">Substack Overview Video</div>
-    </div>
-  </div>
-  
-  <div id="video-sidebar-references" class="video-sidebar">
-    <button class="close-video" onclick="closeVideoSidebar('references')">×</button>
-    <div class="video-container">
-      <div class="video-placeholder">References Overview Video</div>
-    </div>
-  </div>
-  
-  <!-- Role video sidebars -->
-  <div id="video-sidebar-sepiks" class="video-sidebar">
-    <button class="close-video" onclick="closeVideoSidebar('sepiks')">×</button>
-    <div class="video-container">
-      <div class="video-placeholder">Sepiks.ai Role Video</div>
-    </div>
-  </div>
-  
-  <div id="video-sidebar-wolfram" class="video-sidebar">
-    <button class="close-video" onclick="closeVideoSidebar('wolfram')">×</button>
-    <div class="video-container">
-      <div class="video-placeholder">Wolfram Role Video</div>
-    </div>
-  </div>
-  
-  <div id="video-sidebar-curve" class="video-sidebar">
-    <button class="close-video" onclick="closeVideoSidebar('curve')">×</button>
-    <div class="video-container">
-      <div class="video-placeholder">Curve Role Video</div>
-    </div>
-  </div>
-  
-  <div id="video-sidebar-creditease" class="video-sidebar">
-    <button class="close-video" onclick="closeVideoSidebar('creditease')">×</button>
-    <div class="video-container">
-      <div class="video-placeholder">CreditEase Role Video</div>
-    </div>
-  </div>
-  
-  <div id="video-sidebar-google" class="video-sidebar">
-    <button class="close-video" onclick="closeVideoSidebar('google')">×</button>
-    <div class="video-container">
-      <div class="video-placeholder">Google Role Video</div>
-    </div>
-  </div>
-  
-  <div id="video-sidebar-arrowgrass" class="video-sidebar">
-    <button class="close-video" onclick="closeVideoSidebar('arrowgrass')">×</button>
-    <div class="video-container">
-      <div class="video-placeholder">Arrowgrass Role Video</div>
-    </div>
-  </div>
-  
-  <div id="video-sidebar-ucl" class="video-sidebar">
-    <button class="close-video" onclick="closeVideoSidebar('ucl')">×</button>
-    <div class="video-container">
-      <div class="video-placeholder">UCL Role Video</div>
-    </div>
-  </div>
-  
-  <div id="video-sidebar-stan" class="video-sidebar">
-    <button class="close-video" onclick="closeVideoSidebar('stan')">×</button>
-    <div class="video-container">
-      <div class="video-placeholder">Standard Chartered Role Video</div>
-    </div>
-  </div>
-  
-  <div id="video-sidebar-florence" class="video-sidebar">
-    <button class="close-video" onclick="closeVideoSidebar('florence')">×</button>
-    <div class="video-container">
-      <div class="video-placeholder">Florence Art Course Video</div>
-    </div>
-  </div>
-  
-  <div id="video-sidebar-gecapital" class="video-sidebar">
-    <button class="close-video" onclick="closeVideoSidebar('gecapital')">×</button>
-    <div class="video-container">
-      <div class="video-placeholder">GE Capital Role Video</div>
-    </div>
-  </div>
-  
-  <div id="video-sidebar-sav" class="video-sidebar">
-    <button class="close-video" onclick="closeVideoSidebar('sav')">×</button>
-    <div class="video-container">
-      <div class="video-placeholder">SAV Capital Role Video</div>
-    </div>
-  </div>
-  
-  <div id="video-sidebar-rbs" class="video-sidebar">
-    <button class="close-video" onclick="closeVideoSidebar('rbs')">×</button>
-    <div class="video-container">
-      <div class="video-placeholder">RBS Role Video</div>
-    </div>
-  </div>
-  
-  <div id="video-sidebar-ge" class="video-sidebar">
-    <button class="close-video" onclick="closeVideoSidebar('ge')">×</button>
-    <div class="video-container">
-      <div class="video-placeholder">GE Role Video</div>
-    </div>
-  </div>
-  
-  <div id="video-sidebar-umist" class="video-sidebar">
-    <button class="close-video" onclick="closeVideoSidebar('umist')">×</button>
-    <div class="video-container">
-      <div class="video-placeholder">UMIST Role Video</div>
-    </div>
-  </div>
-
-<div id="video-sidebar-personal" class="video-sidebar">
-  <button class="close-video" onclick="closeVideoSidebar('personal')">×</button>
-  <div class="video-container">
-    <div class="video-placeholder">Personal History Overview Video</div>
-  </div>
-</div>
-  
-  <!-- Modal overlay -->
-  <div class="modal-overlay" id="modal-overlay"></div>
-  
-  <header>
-    <div class="version-control">Version 1.6 - March 2025</div>
-    <div class="profile-container">
-      <div class="profile-image">
-        <img src="assets/gitProfilePic.jpeg" alt="Paul Harrald">
-      </div>
-      <h1>Paul Harrald</h1>
-      <p class="title">Executive, Entrepreneur & AI/Blockchain Researcher</p>
-      
-      <!-- Updated download options with export functionality -->
-      <div class="download-container">
-        <button class="download-btn">Download CV ▼</button>
-        <div class="download-options">
-          <a href="#" onclick="generatePDF(); return false;">PDF Format</a>
-          <a href="#" onclick="generateWord(); return false;">Word Format</a>
-          <a href="#" onclick="openInGoogleDocs(); return false;">Google Docs</a>
-        </div>
-      </div>
-    </div>
-  </header>
-  
-  <nav>
-    <ul>
-      <li><a href="#profile">Profile</a></li>
-      <li><a href="#experience">Experience</a></li>
-      <li><a href="#education">Education</a></li>
-      <li><a href="#publications">Publications</a></li>
-      <li><a href="#visiting">Visiting Positions</a></li>
-      <li><a href="#substack">Substack</a></li>
-      <li><a href="#references">References</a></li>
-    </ul>
-  </nav>
-  
-<main>
-  <!-- Tab Navigation -->
-  <div class="tab-navigation">
-    <button class="tab-button active" data-tab="professional" onclick="switchTab('professional')">Professional</button>
-    <button class="tab-button" data-tab="substack" onclick="switchTab('substack')">Substack</button>
-    <button class="tab-button" data-tab="personal" onclick="switchTab('personal')">Personal History</button>
-  </div>
-  
-  <!-- Tab Content Container - Professional Tab (visible by default) -->
-  <div id="tab-content">
-    <section id="profile">
-      <button class="video-button" onclick="openVideoSidebar('profile')">▶</button>
-      <h2>Profile</h2>
-      <div class="content">
-        <p>Executive and entrepreneur with tenured research level academic skills in AI, blockchain and simulation; 20 years of experience in corporate leadership, 2x £500m++ start up. Business experience includes multiple board level positions with an emphasis on ML, finance, and risk strategy. Senior buy side experience in private equity and hedge funds; management of large teams and potent individual contribution. Founded 2x consumer lending companies both based on advanced use of data (EEA/UK).</p>
-      </div>
-    </section>
-    
-    <section id="experience">
-      <button class="video-button" onclick="openVideoSidebar('experience')">▶</button>
-      <h2>Experience</h2>
-      
-      <div class="experience-item">
-        <div class="job-header" onclick="toggleJobDetails(this)">
-          <div class="company-info">
-            <div class="company">Sepiks.ai</div>
-            <div class="meta-info">
-              <span class="period">Jan 2024 - Present</span> | <span class="location">London</span>
-            </div>
-          </div>
-          <div class="expand-icon">▼</div>
-        </div>
-        <div class="job-details">
-          <div class="role">
-            Founder, incubator
-            <button class="role-video-button" onclick="openRoleVideoSidebar('sepiks')">▶</button>
-          </div>
-          <p>Incubating and bootstrapping it until a CTO is hired and an Angel round is complete.</p>
-        </div>
-      </div>
-      
-      <div class="experience-item">
-        <div class="job-header" onclick="toggleJobDetails(this)">
-          <div class="company-info">
-            <div class="company">Wolfram Summer School</div>
-            <div class="meta-info">
-              <span class="period">June 2024 - August 2024</span> | <span class="location">Online</span>
-            </div>
-          </div>
-          <div class="expand-icon">▼</div>
-        </div>
-        <div class="job-details">
-          <div class="role">
-            Researcher
-            <button class="role-video-button" onclick="openRoleVideoSidebar('wolfram')">▶</button>
-          </div>
-          <p>Investigating Bohmian quantum computing and evolutionary game simulations.</p>
-          <p><a href="https://community.wolfram.com/web/pharrald" target="_blank">View my work</a></p>
-        </div>
-      </div>
-      
-      <div class="experience-item">
-        <div class="job-header" onclick="toggleJobDetails(this)">
-          <div class="company-info">
-            <div class="company">CURVE</div>
-            <div class="meta-info">
-              <span class="period">Dec 2020 - Present</span> | <span class="location">London</span>
-            </div>
-          </div>
-          <div class="expand-icon">▼</div>
-        </div>
-        <div class="job-details">
-          <div class="role">
-            Group CFO, CIO, CEO Curve Credit Ltd; Advisor
-            <button class="role-video-button" onclick="openRoleVideoSidebar('curve')">▶</button>
-          </div>
-          <p>A CreditEase portfolio investment. Joined from the fund at Series C to create consumer lending businesses in US, EEA and UK; once done, then CIO and CFO, Board Director.</p>
-          <ul class="responsibilities">
-            <li>All regulatory liaison for establishment of consumer lending permissions in UK and EEA (as SMF1); secured $1bn senior funding and a BIN-sponsor arrangement in the US. Developed in-app lending product and built out servicing infrastructure.</li>
-            <li>As CIO developed a credible and advanced ML/AI agenda and real-time monitoring. Successfully created and managed a risk and compliance function and replaced and managed all executive management in Lithuania.</li>
-            <li>As CFO, with CEO led a successful fundraising rounds holding the 2021 Series C valuation while implementing treasury, capital and cash flow management.</li>
-            <li>Orchestrated a full turnaround of business model from all-margin negative to all margin positive. Clean NMC PWC audit of all entities, clean audits in the US and EEA.</li>
-          </ul>
-        </div>
-      </div>
-      
-      <div class="experience-item">
-        <div class="job-header" onclick="toggleJobDetails(this)">
-          <div class="company-info">
-            <div class="company">CREDITEASE FINTECH FUND AND FUND OF FUNDS</div>
-            <div class="meta-info">
-              <span class="period">Nov 2018 - Dec 2020</span> | <span class="location">London</span>
-            </div>
-          </div>
-          <div class="expand-icon">▼</div>
-        </div>
-        <div class="job-details">
-          <div class="role">
-            Managing Director, Head of European Investments
-            <button class="role-video-button" onclick="openRoleVideoSidebar('creditease')">▶</button>
-          </div>
-          <p>Recruited by a former employee to lead EU/UK investments in fintech for this Chinese fund.</p>
-          <ul class="responsibilities">
-            <li>Leading origination of UK and European investments for the $500m fund.</li>
-            <li>Of the fund's 42 investments 9 became unicorns in this time.</li>
-            <li>Sourcing deals, management of deal flow, due diligence and investment structuring.</li>
-          </ul>
-        </div>
-      </div>
-      
-      <div class="experience-item">
-        <div class="job-header" onclick="toggleJobDetails(this)">
-          <div class="company-info">
-            <div class="company">GOOGLE</div>
-            <div class="meta-info">
-              <span class="period">Dec 2016 - Nov 2018</span> | <span class="location">Hyderabad, Singapore, London</span>
-            </div>
-          </div>
-          <div class="expand-icon">▼</div>
-        </div>
-        <div class="job-details">
-          <div class="role">
-            Risk Advisor
-            <button class="role-video-button" onclick="openRoleVideoSidebar('google')">▶</button>
-          </div>
-          <p>Recruited by former STAN regional CEO to act as Credit and Risk Advisor to the Next Billion Users initiatives focused on financial products.</p>
-          <ul class="responsibilities">
-            <li>Technical consulting on uses of machine learning and AI in financial product provision</li>
-            <li>Support Capital G on (African) M&A investment opportunities.</li>
-            <li>Evaluation of provision new financial products</li>
-            <li>Evaluation of alternatives Google data to support real time decisioning</li>
-          </ul>
-        </div>
-      </div>
-      
-      <div class="experience-item">
-        <div class="job-header" onclick="toggleJobDetails(this)">
-          <div class="company-info">
-            <div class="company">ARROWGRASS CAPITAL PARTNERS</div>
-            <div class="meta-info">
-              <span class="period">Oct 2015 - Nov 2016</span> | <span class="location">London</span>
-            </div>
-          </div>
-          <div class="expand-icon">▼</div>
-        </div>
-        <div class="job-details">
-          <div class="role">
-            Head of Alternative Lending
-            <button class="role-video-button" onclick="openRoleVideoSidebar('arrowgrass')">▶</button>
-          </div>
-          <p>Recruited into this $5bn hedge fund after a consulting contract designing risk systems.</p>
-          <ul class="responsibilities">
-            <li>Evaluation and structuring debt and equity transactions in fintech lending</li>
-            <li>Design and implementation of a risk measurement framework for alternative lending</li>
-            <li>Multiple fintech investments side-pocketed and listed successfully.</li>
-          </ul>
-        </div>
-      </div>
-      
-      <div class="experience-item">
-        <div class="job-header" onclick="toggleJobDetails(this)">
-          <div class="company-info">
-            <div class="company">UNIVERSITY COLLEGE LONDON</div>
-            <div class="meta-info">
-              <span class="period">Sep 2013 - Nov 2020</span> | <span class="location">London</span>
-            </div>
-          </div>
-          <div class="expand-icon">▼</div>
-        </div>
-        <div class="job-details">
-          <div class="role">
-            UCL visiting Professor in Computing Science
-            <button class="role-video-button" onclick="openRoleVideoSidebar('ucl')">▶</button>
-          </div>
-          <p>Supervision of students in PhD research, <em>ad hoc</em> teaching and research in blockchain engineering, AI/ML and economic (banking) systems simulation. Advisor to the Alan Turing Institute on AI/ML in industry.</p>
-        </div>
-      </div>
-      
-      <div class="experience-item">
-        <div class="job-header" onclick="toggleJobDetails(this)">
-          <div class="company-info">
-            <div class="company">STANDARD CHARTERED PLC</div>
-            <div class="meta-info">
-              <span class="period">Sep 2007 - Aug 2014</span> | <span class="location">Singapore and London</span>
-            </div>
-          </div>
-          <div class="expand-icon">▼</div>
-        </div>
-        <div class="job-details">
-          <div class="role">
-            Managing Director, Global Head Portfolio Risk, Group Head Risk Strategy, Head of Quantitative Analytics
-            <button class="role-video-button" onclick="openRoleVideoSidebar('stan')">▶</button>
-          </div>
-          <p>Sequence of increasingly responsible positions ultimately a member of bank's Executive Management Team</p>
-          <ul class="responsibilities">
-            <li>Created and set Group risk appetite across all risk types, led active credit portfolio trading and issuance, set and managed ALM and liquidity risk limits. Led scenario analysis and stress testing, leading to ICAAP, ILAA.</li>
-            <li>Led UK PRA interaction Liaised with, advised and influenced central banks, regulatory bodies and supranationals in all areas of prudential regulation.</li>
-            <li>Voting member of the Capital Management and Group Credit Committees <em>inter alia</em>.</li>
-          </ul>
-        </div>
-      </div>
-      
-      <div class="experience-item">
-        <div class="job-header" onclick="toggleJobDetails(this)">
-          <div class="company-info">
-            <div class="company">Art Course in Florence</div>
-            <div class="meta-info">
-              <span class="period">Nov 2006 - Sep 2007</span> | <span class="location">Florence, Italy</span>
-            </div>
-          </div>
-          <div class="expand-icon">▼</div>
-        </div>
-        <div class="job-details">
-          <div class="role">
-            Sabbatical
-            <button class="role-video-button" onclick="openRoleVideoSidebar('florence')">▶</button>
-          </div>
-          <p>Sabbatical period studying fine art in Florence, Italy.</p>
-        </div>
-      </div>
-      
-      <div class="experience-item">
-        <div class="job-header" onclick="toggleJobDetails(this)">
-          <div class="company-info">
-            <div class="company">GE CAPITAL</div>
-            <div class="meta-info">
-              <span class="period">Jul 2004 - Oct 2006</span> | <span class="location">Stamford CT</span>
-            </div>
-          </div>
-          <div class="expand-icon">▼</div>
-        </div>
-        <div class="job-details">
-          <div class="role">
-            Vice President, Analytics and Risk Strategy
-            <button class="role-video-button" onclick="openRoleVideoSidebar('gecapital')">▶</button>
-          </div>
-          <p>After NewDay exit, invited back to GE.</p>
-          <ul class="responsibilities">
-            <li>Corporate VP role based in GE Capital headquarters in Stamford CT, with global responsibility for risk strategy and quantitative analytics.</li>
-            <li>Developed global risk appetite and Edison-award winning stress testing framework used during mortgage crisis.</li>
-            <li>Due diligence in acquisitions of UK/EEA banks.</li>
-            <li>Liaison with GE R&D with introduction of novel ML optimisation techniques</li>
-            <li>Deal support for substantial structured finance issuance.</li>
-          </ul>
-        </div>
-      </div>
-      
-      <div class="experience-item">
-        <div class="job-header" onclick="toggleJobDetails(this)">
-          <div class="company-info">
-            <div class="company">SAV CAPITAL, SAV CREDIT, NEWDAY</div>
-            <div class="meta-info">
-              <span class="period">Feb 2000 - Apr 2004</span> | <span class="location">London</span>
-            </div>
-          </div>
-          <div class="expand-icon">▼</div>
-        </div>
-        <div class="job-details">
-          <div class="role">
-            Chief Information Officer and Director of Analytics
-            <button class="role-video-button" onclick="openRoleVideoSidebar('sav')">▶</button>
-          </div>
-          <ul class="responsibilities">
-            <li>Day 1 figure in the founding team of this successful alternative finance consumer lending start-up, through first equity raising, establishment of key commercial contracts and debt raising, on to operational success, profitability and exit.</li>
-            <li>Company sold for $740m to Värde.</li>
-            <li>A crucial step was massively to outperform traditional credit scoring, The individual score I built was eventually sold standalone for £1m.</li>
-            <li>Other responsibilities included IT and data infrastructure build; design of automated marketing campaigns; maintenance of financial models</li>
-          </ul>
-        </div>
-      </div>
-      
-      <div class="experience-item">
-        <div class="job-header" onclick="toggleJobDetails(this)">
-          <div class="company-info">
-            <div class="company">ROYAL BANK OF SCOTLAND PLC</div>
-            <div class="meta-info">
-              <span class="period">Jan 1998 - Feb 2000</span> | <span class="location">Edinburgh</span>
-            </div>
-          </div>
-          <div class="expand-icon">▼</div>
-        </div>
-        <div class="job-details">
-          <div class="role">
-            Director, Business Analysis, then Board of Retail Direct
-            <button class="role-video-button" onclick="openRoleVideoSidebar('rbs')">▶</button>
-          </div>
-          <p>Initially head-hunted into leadership of a credit card joint venture with Advanta, then, after the merge with NatWest, elevated to Board of Retail Direct and executive management team of NatWest Streamline and other businesses.</p>
-          <ul class="responsibilities">
-            <li>Functionally responsible for IT across direct retail lending and merchant acquiring (50% of UK transactions were acquired by this business) and business analysis.</li>
-            <li>Led initial due diligence on retail lending and upon NatWest merger, created merged business units and backend systems.</li>
-            <li>Led renegotiation of largest strategic supplier contracts, developed European strategy.</li>
-            <li>Developed credible ML program.</li>
-          </ul>
-        </div>
-      </div>
-      
-      <div class="experience-item">
-        <div class="job-header" onclick="toggleJobDetails(this)">
-          <div class="company-info">
-            <div class="company">GE CAPITAL</div>
-            <div class="meta-info">
-              <span class="period">Jun 1996 - Jan 1998</span> | <span class="location">Leeds and Paris</span>
-            </div>
-          </div>
-          <div class="expand-icon">▼</div>
-        </div>
-        <div class="job-details">
-          <div class="role">
-            Analyst, Senior Analyst, Senior Manager, Director
-            <button class="role-video-button" onclick="openRoleVideoSidebar('ge')">▶</button>
-          </div>
-          <p>Recruited out of University role to help create a Global Modelling Team in a sequence of more senior roles in data science.</p>
-        </div>
-      </div>
-      
-      <div class="experience-item">
-        <div class="job-header" onclick="toggleJobDetails(this)">
-          <div class="company-info">
-            <div class="company">UNIVERSITY OF MANCHESTER, INSTITUTE OF SCIENCE AND TECHNOLOGY</div>
-            <div class="meta-info">
-              <span class="period">Jun 1994 - Jun 1996</span> | <span class="location">Manchester</span>
-            </div>
-          </div>
-          <div class="expand-icon">▼</div>
-        </div>
-        <div class="job-details">
-          <div class="role">
-            Lecturer with Tenure in Economics
-            <button class="role-video-button" onclick="openRoleVideoSidebar('umist')">▶</button>
-          </div>
-          <p>Tenured after 6 months of joining the University, with a lectureship in economics, quantitative methods and game theory, included visiting positions in Max Planck Institute, UCSD and Helsinki Business School. Developed and became Director of the MSc in Business Economics</p>
-        </div>
-      </div>
-      
-    </section>
-    
-    <section id="education">
-      <button class="video-button" onclick="openVideoSidebar('education')">▶</button>
-      <h2>Education</h2>
-      <div class="content">
-        <p>BA (Hons), and MA, PhD, Economics at Simon Fraser University supported by a Commonwealth Scholarship, the Sir Peter Allen Travelling Fellowship and grants from the Social Sciences and Humanities research Council of Canada.</p>
-      </div>
-    </section>
-    
-    <section id="publications">
-      <button class="video-button" onclick="openVideoSidebar('publications')">▶</button>
-      <h2>Selected Publications</h2>
-      <ul class="publications-list">
-        <li>Opeoluwa, B., P. Harrald and F. Medda, "Understanding the consequences of diversification on financial stability" <em>Journal of Economic Interaction and Coordination</em>, January 2018.</li>
-        <li>Opeoluwa, B., P. Harrald <em>et al</em> "The effect of heterogeneity on financial contagion due to overlapping portfolios" <em>Advances in Complex Systems</em>, 19 (8), December 2016.</li>
-        <li>Kan, Y.Y., P. Harrald <em>et al</em>. "Transfer risk under Basel Pillar 1," <em>Journal of Credit Risk</em>, June 2011.</li>
-        <li>Gomme, P and P. Harrald "Applying evolutionary programming to selected set partitioning problems," <em>Fuzzy Sets and Systems</em>, June 1998.</li>
-        <li>Harrald, P. and M. Kamstra "Evolving neural networks to combine financial forecasts," <em>IEEE Transactions on Evolutionary Programming</em>, June 1997.</li>
-        <li>Fogel, D. and P. Harrald "Evolving continuous behaviors in the iterated prisoner's dilemma", <em>Biosystems</em>, June 1996.</li>
-      </ul>
-    </section>
-    
-    <section id="visiting">
-      <button class="video-button" onclick="openVideoSidebar('visiting')">▶</button>
-      <h2>Visiting Positions</h2>
-      <ul>
-        <li><strong>University College London</strong>, honorary visiting Professor in Computing Science</li>
-        <li><strong>Max Planck Institute</strong>, Jena, Visiting Scholar, Institute for Evolutionary Economics</li>
-        <li><strong>Helsinki School of Economics and Business Administration</strong>, visiting Lecturer</li>
-        <li><strong>Wilfrid Laurier University Department of Economics</strong>, visiting Scholar</li>
-        <li><strong>Edinburgh University</strong>, <strong>Artificial Intelligence Applications Institute</strong>, visiting Scholar</li>
-        <li><strong>Canadian Institute for Advanced Research</strong>, assisting Prof Richard Lipsey in research into innovation and economic growth</li>
-        <li><strong>Oxford University</strong>, Saïd Business School, lectures in fintech</li>
-      </ul>
-    </section>
-    
-    <section id="references">
-      <button class="video-button" onclick="openVideoSidebar('references')">▶</button>
-      <h2>References</h2>
-      <p>FTSE 100 Board level references available. All my previous managers since 2000 are available for reference.</p>
-      
-      <div class="external-links">
-        <h3>External Resources</h3>
-        <a href="https://community.wolfram.com/web/pharrald" class="external-link" target="_blank">
-          <span class="icon">🔗</span> Wolfram Community Profile
-        </a>
-        <a href="http://www.sepiks.ai" class="external-link" target="_blank">
-          <span class="icon">🏢</span> Sepiks.ai
-        </a>
-        <a href="https://www.curve.com/en-gb/" class="external-link" target="_blank">
-          <span class="icon">💼</span> CURVE
-        </a>
-        <a href="https://github.com/yourprofile" class="external-link" target="_blank">
-          <span class="icon">💻</span> GitHub Profile
-        </a>
-        <a href="https://linkedin.com/in/yourprofile" class="external-link" target="_blank">
-          <span class="icon">👔</span> LinkedIn Profile
-        </a>
-      </div>
-    </section>
-  </div>
-  
-  <!-- Substack Tab (Hidden by default) -->
-  <div id="substack-content" style="display: none;">
-    <section id="substack">
-      <button class="video-button" onclick="openVideoSidebar('substack')">▶</button>
-      <h2>Substack Articles</h2>
-      <div id="substack-articles" class="substack-container">
-        <p class="loading-text">Loading articles...</p>
-      </div>
-    </section>
-  </div>
-  
-  <!-- Personal History Tab (Hidden by default) -->
-  <div id="personal-content" style="display: none;">
-    <section id="personal-history">
-      <button class="video-button" onclick="openVideoSidebar('personal')">▶</button>
-      <h2>Personal History</h2>
-      
-      <div class="biography-section">
-        <h3>About Me</h3>
-        <div class="biography-text">
-          <p>I was born in [Birthplace] and grew up with a passion for both mathematics and creative pursuits. My academic journey began with a deep interest in economics and game theory, which eventually led me to pursue advanced studies at Simon Fraser University under a Commonwealth Scholarship.</p>
-          
-          <p>Beyond my professional life, I maintain a variety of interests including fine art (which I studied during my sabbatical in Florence), classical music, and technological innovation. My time spent between the UK, Singapore, and North America has given me a global perspective that influences both my personal and professional outlook.</p>
-          
-          <p>My family history traces back to [relevant family background information], and I've maintained a detailed family tree that spans several generations. This connection to history helps ground my forward-looking work in technology and finance.</p>
-        </div>
-      </div>
-      
-      <div class="personal-links">
-        <h3>Personal Links</h3>
-        <div class="links-container">
-          <a href="https://www.ancestry.com/family-tree/" class="personal-link" target="_blank">
-            <span class="personal-link-icon">🌳</span> Family Tree
-          </a>
-          <a href="https://www.instagram.com/yourusername/" class="personal-link" target="_blank">
-            <span class="personal-link-icon">📸</span> Instagram
-          </a>
-          <a href="https://twitter.com/yourusername/" class="personal-link" target="_blank">
-            <span class="personal-link-icon">🐦</span> Twitter
-          </a>
-          <a href="#" class="personal-link" target="_blank">
-            <span class="personal-link-icon">📝</span> Personal Blog
-          </a>
-        </div>
-      </div>
-      
-      <div class="photo-gallery">
-        <h3>Gallery</h3>
-        <div class="gallery-container">
-          <!-- Add placeholder images; replace with actual images when available -->
-          <div class="gallery-item">
-            <img src="/api/placeholder/400/320" alt="Florence Art Studies">
-            <div class="gallery-caption">Florence Art Studies (2007)</div>
-          </div>
-          <div class="gallery-item">
-            <img src="/api/placeholder/400/320" alt="Conference Presentation">
-            <div class="gallery-caption">Conference Presentation (2018)</div>
-          </div>
-          <div class="gallery-item">
-            <img src="/api/placeholder/400/320" alt="Singapore Office">
-            <div class="gallery-caption">Singapore Office (2010)</div>
-          </div>
-          <div class="gallery-item">
-            <img src="/api/placeholder/400/320" alt="Family Gathering">
-            <div class="gallery-caption">Family Gathering (2019)</div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </div>
-</main>
+  </main>
   
   <footer>
     <p>&copy; 2025 Paul Harrald. All rights reserved.</p>
   </footer>
 
   <script>
-    // Function to toggle job details
-    function toggleJobDetails(element) {
-      const details = element.nextElementSibling;
-      const expandIcon = element.querySelector('.expand-icon');
+    document.addEventListener('DOMContentLoaded', function() {
+      // Tab switching functionality
+      const tabButtons = document.querySelectorAll('.tab-button');
+      const tabContents = document.querySelectorAll('.tab-content');
       
-      if (details.classList.contains('active')) {
-        details.classList.remove('active');
-        expandIcon.classList.remove('active');
-      } else {
-        details.classList.add('active');
-        expandIcon.classList.add('active');
-      }
-    }
-    
-    // Function to open video sidebar for sections
-    function openVideoSidebar(section) {
-      document.getElementById(`video-sidebar-${section}`).classList.add('active');
-      document.getElementById('modal-overlay').classList.add('active');
-    }
-    
-    // Function to open video sidebar for individual roles
-    function openRoleVideoSidebar(roleId) {
-      document.getElementById(`video-sidebar-${roleId}`).classList.add('active');
-      document.getElementById('modal-overlay').classList.add('active');
-      // Prevent the click from toggling the job details
-      event.stopPropagation();
-    }
-    
-    // Function to close video sidebar
-    function closeVideoSidebar(section) {
-      document.getElementById(`video-sidebar-${section}`).classList.remove('active');
-      document.getElementById('modal-overlay').classList.remove('active');
-    }
-    
-    // Close sidebar when clicking on overlay
-    document.getElementById('modal-overlay').addEventListener('click', function() {
-      document.querySelectorAll('.video-sidebar').forEach(sidebar => {
-        sidebar.classList.remove('active');
+      tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const tabName = this.getAttribute('data-tab');
+          
+          // Update active tab button
+          tabButtons.forEach(btn => {
+            btn.classList.remove('active');
+          });
+          this.classList.add('active');
+          
+          // Show active tab content
+          tabContents.forEach(content => {
+            content.classList.remove('active');
+          });
+          
+          const activeContent = document.getElementById(tabName + '-content');
+          if (activeContent) {
+            activeContent.classList.add('active');
+          }
+          
+          // If switching to Substack tab, load articles
+          if (tabName === 'substack') {
+            fetchSubstackArticles();
+          }
+        });
       });
-      this.classList.remove('active');
+      
+      // Toggle job details
+      const jobHeaders = document.querySelectorAll('.job-header');
+      
+      jobHeaders.forEach(header => {
+        header.addEventListener('click', function() {
+          const details = this.nextElementSibling;
+          const expandIcon = this.querySelector('.expand-icon');
+          
+          if (details.classList.contains('active')) {
+            details.classList.remove('active');
+            expandIcon.classList.remove('active');
+          } else {
+            details.classList.add('active');
+            expandIcon.classList.add('active');
+          }
+        });
+      });
+      
+      // Video sidebar functionality
+      const videoButtons = document.querySelectorAll('.video-button, .role-video-button');
+      const videoSidebar = document.getElementById('video-sidebar');
+      const modalOverlay = document.getElementById('modal-overlay');
+      const videoContent = document.getElementById('video-content');
+      const closeVideo = document.querySelector('.close-video');
+      
+      videoButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const videoType = this.getAttribute('data-video');
+          videoContent.textContent = `${videoType.charAt(0).toUpperCase() + videoType.slice(1)} Video Content`;
+          
+          videoSidebar.classList.add('active');
+          modalOverlay.classList.add('active');
+        });
+      });
+      
+      closeVideo.addEventListener('click', function() {
+        videoSidebar.classList.remove('active');
+        modalOverlay.classList.remove('active');
+      });
+      
+      modalOverlay.addEventListener('click', function() {
+        videoSidebar.classList.remove('active');
+        this.classList.remove('active');
+      });
+      
+      // Export functionality
+      const downloadPdfBtn = document.getElementById('download-pdf');
+      const downloadWordBtn = document.getElementById('download-word');
+      const openGDocsBtn = document.getElementById('open-gdocs');
+      
+      if (downloadPdfBtn) {
+        downloadPdfBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          generatePDF();
+        });
+      }
+      
+      if (downloadWordBtn) {
+        downloadWordBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          generateWord();
+        });
+      }
+      
+      if (openGDocsBtn) {
+        openGDocsBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          openInGoogleDocs();
+        });
+      }
     });
     
-    // Function to fetch and display Substack articles
+    // Function to fetch Substack articles
     async function fetchSubstackArticles() {
-      const substackURL = 'https://paulharrald.substack.com'; // Updated with correct Substack URL
+      const substackContainer = document.getElementById('substack-articles');
+      if (!substackContainer) return;
+      
+      substackContainer.innerHTML = '<p class="loading-text">Loading articles...</p>';
+      
+      const substackURL = 'https://paulharrald.substack.com'; // Update with your Substack URL
       const corsProxy = 'https://api.allorigins.win/raw?url=';
       const rssURL = `${corsProxy}${encodeURIComponent(substackURL + '/feed')}`;
-      
-      const substackContainer = document.getElementById('substack-articles');
       
       try {
         const response = await fetch(rssURL);
@@ -1399,10 +874,13 @@
         
         for (let i = 0; i < articlesToDisplay; i++) {
           const item = items[i];
-          const title = item.querySelector('title').textContent;
-          const link = item.querySelector('link').textContent;
-          const pubDate = new Date(item.querySelector('pubDate').textContent);
-          const description = item.querySelector('description').textContent;
+          if (!item) continue;
+          
+          const title = item.querySelector('title')?.textContent || 'Untitled';
+          const link = item.querySelector('link')?.textContent || '#';
+          const pubDateEl = item.querySelector('pubDate');
+          const pubDate = pubDateEl ? new Date(pubDateEl.textContent) : new Date();
+          const description = item.querySelector('description')?.textContent || '';
           
           // Format date
           const formattedDate = pubDate.toLocaleDateString('en-US', {
@@ -1411,11 +889,12 @@
             day: 'numeric'
           });
           
-          // Extract excerpt - remove HTML tags and limit length
+          // Clean excerpt content
           const tempDiv = document.createElement('div');
           tempDiv.innerHTML = description;
           const excerpt = tempDiv.textContent.trim().substring(0, 200) + '...';
           
+          // Create article card
           const articleCard = document.createElement('div');
           articleCard.className = 'article-card';
           articleCard.innerHTML = `
@@ -1431,7 +910,6 @@
           
           substackContainer.appendChild(articleCard);
         }
-        
       } catch (error) {
         console.error('Error fetching Substack articles:', error);
         substackContainer.innerHTML = `
@@ -1442,576 +920,729 @@
         `;
       }
     }
-
-// Tab switching function
-function switchTab(tabName) {
-  // Update active tab button
-  document.querySelectorAll('.tab-button').forEach(btn => {
-    if (btn.getAttribute('data-tab') === tabName) {
-      btn.classList.add('active');
-    } else {
-      btn.classList.remove('active');
-    }
-  });
-  
-  // Show/hide content based on tab
-  document.getElementById('tab-content').style.display = tabName === 'professional' ? 'block' : 'none';
-  document.getElementById('substack-content').style.display = tabName === 'substack' ? 'block' : 'none';
-  document.getElementById('personal-content').style.display = tabName === 'personal' ? 'block' : 'none';
-  
-  // If switching to Substack tab, ensure content is loaded
-  if (tabName === 'substack') {
-    fetchSubstackArticles();
-  }
-}
-
-// Function to extract CV content from the current page
-function generateCVContent() {
-  // Extract data from your current CV
-  const name = document.querySelector('h1').textContent;
-  const title = document.querySelector('.title').textContent;
-  
-  // Get profile text
-  const profile = document.querySelector('#profile .content').textContent.trim();
-  
-  // Get experience items
-  const experienceItems = [];
-  document.querySelectorAll('.experience-item').forEach(item => {
-    const company = item.querySelector('.company').textContent;
-    const period = item.querySelector('.period').textContent;
-    const location = item.querySelector('.location').textContent;
     
-    // Role text may have the video button, need to clean it
-    let role = '';
-    const roleElement = item.querySelector('.role');
-    if (roleElement) {
-      // Clone the element to avoid modifying the original
-      const roleClone = roleElement.cloneNode(true);
-      // Remove any button elements
-      const buttons = roleClone.querySelectorAll('button');
-      buttons.forEach(button => button.remove());
-      role = roleClone.textContent.trim();
-    }
-    
-    // Get responsibilities
-    const responsibilities = [];
-    const responsibilitiesList = item.querySelector('ul.responsibilities');
-    if (responsibilitiesList) {
-      responsibilitiesList.querySelectorAll('li').forEach(li => {
-        responsibilities.push(li.textContent.trim());
-      });
-    }
-    
-    // Get description paragraph
-    let description = '';
-    const descParagraph = item.querySelector('.job-details > p');
-    if (descParagraph) {
-      description = descParagraph.textContent.trim();
-    }
-    
-    experienceItems.push({
-      company,
-      period,
-      location,
-      role,
-      description,
-      responsibilities
-    });
-  });
-  
-  // Get education
-  const education = document.querySelector('#education .content').textContent.trim();
-  
-  // Get publications
-  const publications = [];
-  document.querySelectorAll('.publications-list li').forEach(item => {
-    publications.push(item.textContent.trim());
-  });
-  
-  // Get visiting positions
-  const visitingPositions = [];
-  document.querySelectorAll('#visiting ul li').forEach(item => {
-    visitingPositions.push(item.textContent.trim());
-  });
-  
-  return {
-    name,
-    title,
-    profile,
-    experience: experienceItems,
-    education,
-    publications,
-    visitingPositions
-  };
-}
+    // Function to generate PDF
+    function generatePDF() {
+      // Create PDF content element
+      const element = document.createElement('div');
+      element.style.padding = '40px';
+      element.style.maxWidth = '800px';
+      element.style.margin = '0 auto';
+      element.style.fontFamily = 'Arial, sans-serif';
       
-function generatePDF() {
-  // Create a simplified version of the CV for PDF export
-  const element = document.createElement("div");
-  element.innerHTML = `
-    <div style="padding: 40px; font-family: Arial; max-width: 800px; margin: 0 auto;">
-      <h1 style="color: #1a237e;">${document.querySelector('h1').textContent}</h1>
-      <p style="font-size: 18px; margin-bottom: 20px;">${document.querySelector('.title').textContent}</p>
-      <hr style="border: 1px solid #42a5f5; margin: 20px 0;">
-      
-      <h2 style="color: #1a237e;">PROFILE</h2>
-      <p>${document.querySelector('#profile .content').textContent.trim()}</p>
-      
-      <h2 style="color: #1a237e; margin-top: 30px;">EXPERIENCE</h2>
-      ${Array.from(document.querySelectorAll('.experience-item')).map(item => `
-        <div style="margin-bottom: 15px;">
-          <h3 style="margin-bottom: 5px;">${item.querySelector('.company').textContent}</h3>
-          <p style="font-style: italic;">${item.querySelector('.role').textContent.replace('▶', '').trim()} | 
-             ${item.querySelector('.period').textContent} | 
-             ${item.querySelector('.location').textContent}</p>
-          ${item.querySelector('.job-details > p') ? 
-            `<p>${item.querySelector('.job-details > p').textContent}</p>` : ''}
-          ${item.querySelector('ul.responsibilities') ? 
-            `<ul>${Array.from(item.querySelectorAll('ul.responsibilities li'))
-              .map(li => `<li>${li.textContent}</li>`).join('')}</ul>` : ''}
-        </div>
-      `).join('')}
-      
-      <h2 style="color: #1a237e; margin-top: 30px;">EDUCATION</h2>
-      <p>${document.querySelector('#education .content').textContent.trim()}</p>
-      
-      <h2 style="color: #1a237e; margin-top: 30px;">SELECTED PUBLICATIONS</h2>
-      <ul>
-        ${Array.from(document.querySelectorAll('.publications-list li'))
-          .map(li => `<li>${li.textContent}</li>`).join('')}
-      </ul>
-      
-      <h2 style="color: #1a237e; margin-top: 30px;">VISITING POSITIONS</h2>
-      <ul>
-        ${Array.from(document.querySelectorAll('#visiting ul li'))
-          .map(li => `<li>${li.textContent}</li>`).join('')}
-      </ul>
-    </div>
-  `;
-  
-  document.body.appendChild(element);
-  
-  window.scrollTo(0, 0);
-  html2canvas(element, {
-    scale: 2,
-    useCORS: true,
-    logging: false
-  }).then(canvas => {
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new window.jspdf.jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4'
-    });
-    
-    const imgProps = pdf.getImageProperties(imgData);
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-    
-    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-    pdf.save('paul-harrald-cv.pdf');
-    
-    document.body.removeChild(element);
-  });
-}
-  
-  // Add this helper function before generateWord
-function checkDocxLoaded() {
-  if (typeof docx === 'undefined') {
-    const script = document.createElement('script');
-    script.src = 'https://unpkg.com/docx@7.8.2/build/index.js';
-    script.onload = function() {
-      alert('Library loaded. Please try again.');
-    };
-    document.head.appendChild(script);
-    return false;
-  }
-  return true;
-}
-
-// Your modified generateWord function with the check added
-function generateWord() {
-  if (!checkDocxLoaded()) {
-    return;
-  }
-  
-  const cvData = generateCVContent();
-  
-  // Create a new Document
-  const doc = new docx.Document({
-    sections: [{
-      properties: {},
-      children: [
-        // Header with name and title
-        new docx.Paragraph({
-          text: cvData.name,
-          heading: docx.HeadingLevel.HEADING_1,
-          thematicBreak: true,
-          spacing: { after: 200 }
-        }),
-        new docx.Paragraph({
-          text: cvData.title,
-          spacing: { after: 400 }
-        }),
+      // Populate content from CV
+      element.innerHTML = `
+        <h1 style="color: #1a237e;">${document.querySelector('h1').textContent}</h1>
+        <p style="font-size: 18px; margin-bottom: 20px;">${document.querySelector('.title').textContent}</p>
+        <hr style="border: 1px solid #42a5f5; margin: 20px 0;">
         
-        // Profile section
-        new docx.Paragraph({
-          text: "PROFILE",
-          heading: docx.HeadingLevel.HEADING_2,
-          spacing: { before: 400, after: 200 }
-        }),
-        new docx.Paragraph({
-          text: cvData.profile,
-          spacing: { after: 400 }
-        })
-      ]
-    }]
-  });
-  
-  // Add experience section
-  doc.addSection({
-    properties: {},
-    children: [
-      new docx.Paragraph({
-        text: "EXPERIENCE",
-        heading: docx.HeadingLevel.HEADING_2,
-        spacing: { before: 400, after: 200 }
-      }),
-      
-      // Add each experience item
-      ...cvData.experience.flatMap(exp => {
-        const paragraphs = [
-          new docx.Paragraph({
-            text: exp.company,
-            heading: docx.HeadingLevel.HEADING_3,
-            spacing: { before: 300, after: 100 }
-          }),
-          new docx.Paragraph({
-            children: [
-              new docx.TextRun({
-                text: `${exp.role} | ${exp.period} | ${exp.location}`,
-                italics: true
-              })
-            ],
-            spacing: { after: 200 }
-          })
-        ];
+        <h2 style="color: #1a237e; margin-top: 30px;">EDUCATION</h2>
+        <p>${document.querySelector('#education .content')?.textContent.trim()}</p>
         
-        // Add description if available
-        if (exp.description) {
-          paragraphs.push(
-            new docx.Paragraph({
-              text: exp.description,
-              spacing: { after: 200 }
-            })
-          );
-        }
+        <h2 style="color: #1a237e; margin-top: 30px;">SELECTED PUBLICATIONS</h2>
+        <ul>
+          ${Array.from(document.querySelectorAll('.publications-list li') || [])
+            .map(li => `<li>${li.textContent}</li>`).join('')}
+        </ul>
         
-        // Add responsibilities as bullet points
-        if (exp.responsibilities && exp.responsibilities.length > 0) {
-          exp.responsibilities.forEach(resp => {
-            paragraphs.push(
-              new docx.Paragraph({
-                text: resp,
-                bullet: { level: 0 },
-                spacing: { after: 100 }
-              })
-            );
-          });
-        }
-        
-        return paragraphs;
-      })
-    ]
-  });
-  
-  // Add education section
-  doc.addSection({
-    properties: {},
-    children: [
-      new docx.Paragraph({
-        text: "EDUCATION",
-        heading: docx.HeadingLevel.HEADING_2,
-        spacing: { before: 400, after: 200 }
-      }),
-      new docx.Paragraph({
-        text: cvData.education,
-        spacing: { after: 400 }
-      })
-    ]
-  });
-  
-  // Add publications section if available
-  if (cvData.publications.length > 0) {
-    doc.addSection({
-      properties: {},
-      children: [
-        new docx.Paragraph({
-          text: "SELECTED PUBLICATIONS",
-          heading: docx.HeadingLevel.HEADING_2,
-          spacing: { before: 400, after: 200 }
-        }),
-        ...cvData.publications.map(pub => 
-          new docx.Paragraph({
-            text: pub,
-            bullet: { level: 0 },
-            spacing: { after: 200 }
-          })
-        )
-      ]
-    });
-  }
-  
-  // Add visiting positions section if available
-  if (cvData.visitingPositions.length > 0) {
-    doc.addSection({
-      properties: {},
-      children: [
-        new docx.Paragraph({
-          text: "VISITING POSITIONS",
-          heading: docx.HeadingLevel.HEADING_2,
-          spacing: { before: 400, after: 200 }
-        }),
-        ...cvData.visitingPositions.map(pos => 
-          new docx.Paragraph({
-            text: pos,
-            bullet: { level: 0 },
-            spacing: { after: 100 }
-          })
-        )
-      ]
-    });
-  }
-  
-  // Generate and download the document
-  docx.Packer.toBlob(doc).then(blob => {
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'paul-harrald-cv.docx';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  });
-}
-  
-    
-    // Function to open and import document in Google Docs
-function openInGoogleDocs() {
-  // First generate the Word document silently
-  const cvData = generateCVContent();
-  
-  // Check if docx is available
-  if (typeof docx === 'undefined') {
-    alert('Preparing Google Docs version...');
-    const script = document.createElement('script');
-    script.src = 'https://unpkg.com/docx@7.8.2/build/index.js';
-    script.onload = function() {
-      // Once loaded, retry
-      openInGoogleDocs();
-    };
-    document.head.appendChild(script);
-    return;
-  }
-  
-  // Create Word document
-  const doc = new docx.Document({
-    sections: [
-      {
-        properties: {},
-        children: [
-          new docx.Paragraph({
-            text: cvData.name,
-            heading: docx.HeadingLevel.HEADING_1,
-            thematicBreak: true,
-            spacing: { after: 200 }
-          }),
-          new docx.Paragraph({
-            text: cvData.title,
-            spacing: { after: 400 }
-          }),
-          new docx.Paragraph({
-            text: "PROFILE",
-            heading: docx.HeadingLevel.HEADING_2,
-            spacing: { before: 400, after: 200 }
-          }),
-          new docx.Paragraph({
-            text: cvData.profile,
-            spacing: { after: 400 }
-          }),
-          // Experience header
-          new docx.Paragraph({
-            text: "EXPERIENCE",
-            heading: docx.HeadingLevel.HEADING_2,
-            spacing: { before: 400, after: 200 }
-          })
-        ]
-      }
-    ]
-  });
-  
-  // Add experience items
-  cvData.experience.forEach(exp => {
-    doc.addParagraph(
-      new docx.Paragraph({
-        text: exp.company,
-        heading: docx.HeadingLevel.HEADING_3,
-        spacing: { before: 300, after: 100 }
-      })
-    );
-    
-    doc.addParagraph(
-      new docx.Paragraph({
-        children: [
-          new docx.TextRun({
-            text: `${exp.role} | ${exp.period} | ${exp.location}`,
-            italics: true
-          })
-        ],
-        spacing: { after: 200 }
-      })
-    );
-    
-    if (exp.description) {
-      doc.addParagraph(
-        new docx.Paragraph({
-          text: exp.description,
-          spacing: { after: 200 }
-        })
-      );
-    }
-    
-    if (exp.responsibilities && exp.responsibilities.length > 0) {
-      exp.responsibilities.forEach(resp => {
-        doc.addParagraph(
-          new docx.Paragraph({
-            text: resp,
-            bullet: { level: 0 },
-            spacing: { after: 100 }
-          })
-        );
-      });
-    }
-  });
-  
-  // Add education section
-  doc.addParagraph(
-    new docx.Paragraph({
-      text: "EDUCATION",
-      heading: docx.HeadingLevel.HEADING_2,
-      spacing: { before: 400, after: 200 }
-    })
-  );
-  
-  doc.addParagraph(
-    new docx.Paragraph({
-      text: cvData.education,
-      spacing: { after: 400 }
-    })
-  );
-  
-  // Add publications if available
-  if (cvData.publications.length > 0) {
-    doc.addParagraph(
-      new docx.Paragraph({
-        text: "SELECTED PUBLICATIONS",
-        heading: docx.HeadingLevel.HEADING_2,
-        spacing: { before: 400, after: 200 }
-      })
-    );
-    
-    cvData.publications.forEach(pub => {
-      doc.addParagraph(
-        new docx.Paragraph({
-          text: pub,
-          bullet: { level: 0 },
-          spacing: { after: 200 }
-        })
-      );
-    });
-  }
-  
-  // Add visiting positions if available
-  if (cvData.visitingPositions.length > 0) {
-    doc.addParagraph(
-      new docx.Paragraph({
-        text: "VISITING POSITIONS",
-        heading: docx.HeadingLevel.HEADING_2,
-        spacing: { before: 400, after: 200 }
-      })
-    );
-    
-    cvData.visitingPositions.forEach(pos => {
-      doc.addParagraph(
-        new docx.Paragraph({
-          text: pos,
-          bullet: { level: 0 },
-          spacing: { after: 100 }
-        })
-      );
-    });
-  }
-  
-  // Generate DOCX file
-  docx.Packer.toBlob(doc).then(blob => {
-    // Save DOCX locally
-    const docxUrl = URL.createObjectURL(blob);
-    const tempLink = document.createElement('a');
-    tempLink.href = docxUrl;
-    tempLink.download = 'paul-harrald-cv.docx';
-    document.body.appendChild(tempLink);
-    tempLink.click();
-    document.body.removeChild(tempLink);
-    
-    // Open Google Drive upload page in a new tab
-    setTimeout(() => {
-      window.open('https://drive.google.com/drive/upload', '_blank');
-      
-      // Show instructions modal
-      const instructionsModal = document.createElement('div');
-      instructionsModal.style.position = 'fixed';
-      instructionsModal.style.top = '50%';
-      instructionsModal.style.left = '50%';
-      instructionsModal.style.transform = 'translate(-50%, -50%)';
-      instructionsModal.style.background = 'white';
-      instructionsModal.style.padding = '20px';
-      instructionsModal.style.borderRadius = '8px';
-      instructionsModal.style.boxShadow = '0 4px 20px rgba(0,0,0,0.2)';
-      instructionsModal.style.zIndex = '10000';
-      instructionsModal.style.maxWidth = '500px';
-      
-      instructionsModal.innerHTML = `
-        <h3 style="color: #1a237e; margin-top: 0;">Google Docs Import</h3>
-        <p>Your CV has been downloaded as a Word document. To open it in Google Docs:</p>
-        <ol>
-          <li>In the Google Drive tab that just opened, click "New" → "File upload"</li>
-          <li>Select the "paul-harrald-cv.docx" file you just downloaded</li>
-          <li>Once uploaded, right-click the file and select "Open with" → "Google Docs"</li>
-        </ol>
-        <button id="close-instructions" style="background: #42a5f5; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; float: right;">Got it</button>
+        <h2 style="color: #1a237e; margin-top: 30px;">VISITING POSITIONS</h2>
+        <ul>
+          ${Array.from(document.querySelectorAll('#visiting ul li') || [])
+            .map(li => `<li>${li.textContent}</li>`).join('')}
+        </ul>
       `;
       
-      document.body.appendChild(instructionsModal);
+      // Add element to the body temporarily
+      document.body.appendChild(element);
       
-      // Add overlay
-      const overlay = document.createElement('div');
-      overlay.style.position = 'fixed';
-      overlay.style.top = '0';
-      overlay.style.left = '0';
-      overlay.style.right = '0';
-      overlay.style.bottom = '0';
-      overlay.style.backgroundColor = 'rgba(0,0,0,0.5)';
-      overlay.style.zIndex = '9999';
-      document.body.appendChild(overlay);
-      
-      // Close modal on button click
-      document.getElementById('close-instructions').addEventListener('click', function() {
-        document.body.removeChild(instructionsModal);
-        document.body.removeChild(overlay);
+      // Generate PDF
+      html2pdf().from(element).set({
+        margin: [15, 15, 15, 15],
+        filename: 'paul-harrald-cv.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      }).save().then(() => {
+        // Remove the element after PDF generation
+        document.body.removeChild(element);
       });
-    }, 1000);
-  });
-}
+    }
+    
+    // Helper function to check if DOCX library is loaded
+    function checkDocxLoaded() {
+      if (typeof docx === 'undefined') {
+        const script = document.createElement('script');
+        script.src = 'https://unpkg.com/docx@7.8.2/build/index.js';
+        script.onload = function() {
+          alert('Document library loaded. Please try again.');
+        };
+        document.head.appendChild(script);
+        return false;
+      }
+      return true;
+    }
+    
+    // Function to generate Word document
+    function generateWord() {
+      if (!checkDocxLoaded()) {
+        return;
+      }
+      
+      try {
+        // Create a new Document
+        const doc = new docx.Document({
+          sections: [{
+            properties: {},
+            children: [
+              // Header with name and title
+              new docx.Paragraph({
+                text: document.querySelector('h1').textContent,
+                heading: docx.HeadingLevel.HEADING_1,
+                thematicBreak: true,
+                spacing: { after: 200 }
+              }),
+              new docx.Paragraph({
+                text: document.querySelector('.title').textContent,
+                spacing: { after: 400 }
+              }),
+              
+              // Profile section
+              new docx.Paragraph({
+                text: "PROFILE",
+                heading: docx.HeadingLevel.HEADING_2,
+                spacing: { before: 400, after: 200 }
+              }),
+              new docx.Paragraph({
+                text: document.querySelector('#profile .content').textContent.trim(),
+                spacing: { after: 400 }
+              })
+            ]
+          }]
+        });
+        
+        // Experience section
+        const experienceItems = document.querySelectorAll('.experience-item');
+        experienceItems.forEach(item => {
+          // Company name
+          doc.addSection({
+            children: [
+              new docx.Paragraph({
+                text: item.querySelector('.company').textContent,
+                heading: docx.HeadingLevel.HEADING_3,
+                spacing: { before: 300, after: 100 }
+              }),
+              new docx.Paragraph({
+                children: [
+                  new docx.TextRun({
+                    text: `${item.querySelector('.role').textContent.replace(/▶/, '').trim()} | ${item.querySelector('.period').textContent} | ${item.querySelector('.location').textContent}`,
+                    italics: true
+                  })
+                ],
+                spacing: { after: 200 }
+              })
+            ]
+          });
+          
+          // Description
+          const description = item.querySelector('.job-details > p');
+          if (description) {
+            doc.addParagraph(
+              new docx.Paragraph({
+                text: description.textContent,
+                spacing: { after: 200 }
+              })
+            );
+          }
+          
+          // Responsibilities
+          const responsibilities = item.querySelectorAll('ul.responsibilities li');
+          if (responsibilities.length) {
+            responsibilities.forEach(resp => {
+              doc.addParagraph(
+                new docx.Paragraph({
+                  text: resp.textContent,
+                  bullet: { level: 0 },
+                  spacing: { after: 100 }
+                })
+              );
+            });
+          }
+        });
+        
+        // Add education, publications, etc.
+        doc.addSection({
+          children: [
+            new docx.Paragraph({
+              text: "EDUCATION",
+              heading: docx.HeadingLevel.HEADING_2,
+              spacing: { before: 400, after: 200 }
+            }),
+            new docx.Paragraph({
+              text: document.querySelector('#education .content').textContent.trim(),
+              spacing: { after: 400 }
+            })
+          ]
+        });
+        
+        // Generate and download the document
+        docx.Packer.toBlob(doc).then(blob => {
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = 'paul-harrald-cv.docx';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        });
+      } catch (error) {
+        console.error('Error generating Word document:', error);
+        alert('Error generating Word document. Please make sure the DOCX library is loaded.');
+      }
+    }
+    
+    // Function to open in Google Docs
+    function openInGoogleDocs() {
+      // Generate Word first
+      if (!checkDocxLoaded()) {
+        alert('Loading document library. Please try again in a moment.');
+        return;
+      }
+      
+      generateWord();
+      
+      // Open Google Drive
+      setTimeout(() => {
+        window.open('https://drive.google.com/drive/upload', '_blank');
+        
+        // Show instructions
+        alert('Your CV has been downloaded as a Word document.\n\n' +
+              'To open it in Google Docs:\n' +
+              '1. In the Google Drive tab, click "New" → "File upload"\n' +
+              '2. Select the "paul-harrald-cv.docx" file you just downloaded\n' +
+              '3. Once uploaded, right-click the file and select "Open with" → "Google Docs"');
+      }, 1000);
+    }
   </script>
 </body>
-</html>
+</html>: #1a237e;">PROFILE</h2>
+        <p>${document.querySelector('#profile .content').textContent.trim()}</p>
+        
+        <h2 style="color: #1a237e; margin-top: 30px;">EXPERIENCE</h2>
+        ${Array.from(document.querySelectorAll('.experience-item')).map(item => `
+          <div style="margin-bottom: 15px;">
+            <h3 style="margin-bottom: 5px;">${item.querySelector('.company').textContent}</h3>
+            <p style="font-style: italic;">${item.querySelector('.role').textContent.replace(/▶/, '').trim()} | 
+              ${item.querySelector('.period').textContent} | 
+              ${item.querySelector('.location').textContent}</p>
+            ${item.querySelector('.job-details > p') ? 
+              `<p>${item.querySelector('.job-details > p').textContent}</p>` : ''}
+            ${item.querySelector('ul.responsibilities') ? 
+              `<ul>${Array.from(item.querySelectorAll('ul.responsibilities li'))
+                .map(li => `<li>${li.textContent}</li>`).join('')}</ul>` : ''}
+          </div>
+        `).join('')}
+        
+        <h2 style="color
+  </div>
+  
+  <!-- Modal Overlay -->
+  <div class="modal-overlay" id="modal-overlay"></div>
+  
+  <header>
+    <div class="version-control">Version 1.6 - March 2025</div>
+    <div class="profile-container">
+      <div class="profile-image">
+        <img src="assets/gitProfilePic.jpeg" alt="Paul Harrald">
+      </div>
+      <h1>Paul Harrald</h1>
+      <p class="title">Executive, Entrepreneur & AI/Blockchain Researcher</p>
+      
+      <!-- Download Options -->
+      <div class="download-container">
+        <button class="download-btn">Download CV <i class="fas fa-chevron-down"></i></button>
+        <div class="download-options">
+          <a href="#" id="download-pdf">PDF Format</a>
+          <a href="#" id="download-word">Word Format</a>
+          <a href="#" id="open-gdocs">Google Docs</a>
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  <nav>
+    <ul>
+      <li><a href="#profile">Profile</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#education">Education</a></li>
+      <li><a href="#publications">Publications</a></li>
+      <li><a href="#visiting">Visiting Positions</a></li>
+      <li><a href="#substack">Substack</a></li>
+      <li><a href="#references">References</a></li>
+    </ul>
+  </nav>
+  
+  <main>
+    <!-- Tab Navigation -->
+    <div class="tab-navigation">
+      <button class="tab-button active" data-tab="professional">Professional</button>
+      <button class="tab-button" data-tab="substack">Substack</button>
+      <button class="tab-button" data-tab="personal">Personal History</button>
+    </div>
+    
+    <!-- Professional Tab Content -->
+    <div id="professional-content" class="tab-content active">
+      <section id="profile">
+        <button class="video-button" data-video="profile"><i class="fas fa-play"></i></button>
+        <h2>Profile</h2>
+        <div class="content">
+          <p>Executive and entrepreneur with tenured research level academic skills in AI, blockchain and simulation; 20 years of experience in corporate leadership, 2x £500m++ start up. Business experience includes multiple board level positions with an emphasis on ML, finance, and risk strategy. Senior buy side experience in private equity and hedge funds; management of large teams and potent individual contribution. Founded 2x consumer lending companies both based on advanced use of data (EEA/UK).</p>
+        </div>
+      </section>
+    </div>
+    
+    <!-- Substack Tab Content -->
+    <div id="substack-content" class="tab-content">
+      <section id="substack">
+        <button class="video-button" data-video="substack"><i class="fas fa-play"></i></button>
+        <h2>Substack Articles</h2>
+        <div id="substack-articles" class="substack-container">
+          <p class="loading-text">Loading articles...</p>
+        </div>
+      </section>
+    </div>
+    
+    <!-- Personal History Tab Content -->
+    <div id="personal-content" class="tab-content">
+      <section id="personal-history">
+        <button class="video-button" data-video="personal"><i class="fas fa-play"></i></button>
+        <h2>Personal History</h2>
+        
+        <div class="biography-section">
+          <h3>About Me</h3>
+          <div class="biography-text">
+            <p>I was born in [Birthplace] and grew up with a passion for both mathematics and creative pursuits. My academic journey began with a deep interest in economics and game theory, which eventually led me to pursue advanced studies at Simon Fraser University under a Commonwealth Scholarship.</p>
+            
+            <p>Beyond my professional life, I maintain a variety of interests including fine art (which I studied during my sabbatical in Florence), classical music, and technological innovation. My time spent between the UK, Singapore, and North America has given me a global perspective that influences both my personal and professional outlook.</p>
+            
+            <p>My family history traces back to [relevant family background information], and I've maintained a detailed family tree that spans several generations. This connection to history helps ground my forward-looking work in technology and finance.</p>
+          </div>
+        </div>
+        
+        <div class="personal-links">
+          <h3>Personal Links</h3>
+          <div class="links-container">
+            <a href="https://www.ancestry.com/family-tree/" class="personal-link" target="_blank">
+              <span class="personal-link-icon"><i class="fas fa-tree"></i></span> Family Tree
+            </a>
+            <a href="https://www.instagram.com/yourusername/" class="personal-link" target="_blank">
+              <span class="personal-link-icon"><i class="fab fa-instagram"></i></span> Instagram
+            </a>
+            <a href="https://twitter.com/yourusername/" class="personal-link" target="_blank">
+              <span class="personal-link-icon"><i class="fab fa-twitter"></i></span> Twitter
+            </a>
+            <a href="#" class="personal-link" target="_blank">
+              <span class="personal-link-icon"><i class="fas fa-blog"></i></span> Personal Blog
+            </a>
+          </div>
+        </div>
+        
+        <div class="photo-gallery">
+          <h3>Gallery</h3>
+          <div class="gallery-container">
+            <div class="gallery-item">
+              <img src="/api/placeholder/400/320" alt="Florence Art Studies">
+              <div class="gallery-caption">Florence Art Studies (2007)</div>
+            </div>
+            <div class="gallery-item">
+              <img src="/api/placeholder/400/320" alt="Conference Presentation">
+              <div class="gallery-caption">Conference Presentation (2018)</div>
+            </div>
+            <div class="gallery-item">
+              <img src="/api/placeholder/400/320" alt="Singapore Office">
+              <div class="gallery-caption">Singapore Office (2010)</div>
+            </div>
+            <div class="gallery-item">
+              <img src="/api/placeholder/400/320" alt="Family Gathering">
+              <div class="gallery-caption">Family Gathering (2019)</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+      
+      <section id="experience">
+        <button class="video-button" data-video="experience"><i class="fas fa-play"></i></button>
+        <h2>Experience</h2>
+        
+        <div class="experience-item">
+          <div class="job-header">
+            <div class="company-info">
+              <div class="company">Sepiks.ai</div>
+              <div class="meta-info">
+                <span class="period">Jan 2024 - Present</span> | <span class="location">London</span>
+              </div>
+            </div>
+            <div class="expand-icon"><i class="fas fa-chevron-down"></i></div>
+          </div>
+          <div class="job-details">
+            <div class="role">
+              Founder, incubator
+              <button class="role-video-button" data-video="sepiks"><i class="fas fa-play"></i></button>
+            </div>
+            <p>Incubating and bootstrapping it until a CTO is hired and an Angel round is complete.</p>
+          </div>
+        </div>
+      </section>
+      
+      <section id="education">
+        <button class="video-button" data-video="education"><i class="fas fa-play"></i></button>
+        <h2>Education</h2>
+        <div class="content">
+          <p>BA (Hons), and MA, PhD, Economics at Simon Fraser University supported by a Commonwealth Scholarship, the Sir Peter Allen Travelling Fellowship and grants from the Social Sciences and Humanities research Council of Canada.</p>
+        </div>
+      </section>
+      
+      <section id="publications">
+        <button class="video-button" data-video="publications"><i class="fas fa-play"></i></button>
+        <h2>Selected Publications</h2>
+        <ul class="publications-list">
+          <li>Opeoluwa, B., P. Harrald and F. Medda, "Understanding the consequences of diversification on financial stability" <em>Journal of Economic Interaction and Coordination</em>, January 2018.</li>
+          <li>Opeoluwa, B., P. Harrald <em>et al</em> "The effect of heterogeneity on financial contagion due to overlapping portfolios" <em>Advances in Complex Systems</em>, 19 (8), December 2016.</li>
+          <li>Kan, Y.Y., P. Harrald <em>et al</em>. "Transfer risk under Basel Pillar 1," <em>Journal of Credit Risk</em>, June 2011.</li>
+          <li>Gomme, P and P. Harrald "Applying evolutionary programming to selected set partitioning problems," <em>Fuzzy Sets and Systems</em>, June 1998.</li>
+          <li>Harrald, P. and M. Kamstra "Evolving neural networks to combine financial forecasts," <em>IEEE Transactions on Evolutionary Programming</em>, June 1997.</li>
+          <li>Fogel, D. and P. Harrald "Evolving continuous behaviors in the iterated prisoner's dilemma", <em>Biosystems</em>, June 1996.</li>
+        </ul>
+      </section>
+      
+      <section id="visiting">
+        <button class="video-button" data-video="visiting"><i class="fas fa-play"></i></button>
+        <h2>Visiting Positions</h2>
+        <ul>
+          <li><strong>University College London</strong>, honorary visiting Professor in Computing Science</li>
+          <li><strong>Max Planck Institute</strong>, Jena, Visiting Scholar, Institute for Evolutionary Economics</li>
+          <li><strong>Helsinki School of Economics and Business Administration</strong>, visiting Lecturer</li>
+          <li><strong>Wilfrid Laurier University Department of Economics</strong>, visiting Scholar</li>
+          <li><strong>Edinburgh University</strong>, <strong>Artificial Intelligence Applications Institute</strong>, visiting Scholar</li>
+          <li><strong>Canadian Institute for Advanced Research</strong>, assisting Prof Richard Lipsey in research into innovation and economic growth</li>
+          <li><strong>Oxford University</strong>, Saïd Business School, lectures in fintech</li>
+        </ul>
+      </section>
+      
+      <section id="references">
+        <button class="video-button" data-video="references"><i class="fas fa-play"></i></button>
+        <h2>References</h2>
+        <p>FTSE 100 Board level references available. All my previous managers since 2000 are available for reference.</p>
+        
+        <div class="external-links">
+          <h3>External Resources</h3>
+          <a href="https://community.wolfram.com/web/pharrald" class="external-link" target="_blank">
+            <span class="icon"><i class="fas fa-link"></i></span> Wolfram Community Profile
+          </a>
+          <a href="http://www.sepiks.ai" class="external-link" target="_blank">
+            <span class="icon"><i class="fas fa-building"></i></span> Sepiks.ai
+          </a>
+          <a href="https://www.curve.com/en-gb/" class="external-link" target="_blank">
+            <span class="icon"><i class="fas fa-briefcase"></i></span> CURVE
+          </a>
+          <a href="https://github.com/yourprofile" class="external-link" target="_blank">
+            <span class="icon"><i class="fab fa-github"></i></span> GitHub Profile
+          </a>
+          <a href="https://linkedin.com/in/yourprofile" class="external-link" target="_blank">
+            <span class="icon"><i class="fab fa-linkedin"></i></span> LinkedIn Profile
+          </a>
+        </div>
+      </section>
+        
+        <div class="experience-item">
+          <div class="job-header">
+            <div class="company-info">
+              <div class="company">SAV CAPITAL, SAV CREDIT, NEWDAY</div>
+              <div class="meta-info">
+                <span class="period">Feb 2000 - Apr 2004</span> | <span class="location">London</span>
+              </div>
+            </div>
+            <div class="expand-icon"><i class="fas fa-chevron-down"></i></div>
+          </div>
+          <div class="job-details">
+            <div class="role">
+              Chief Information Officer and Director of Analytics
+              <button class="role-video-button" data-video="sav"><i class="fas fa-play"></i></button>
+            </div>
+            <ul class="responsibilities">
+              <li>Day 1 figure in the founding team of this successful alternative finance consumer lending start-up, through first equity raising, establishment of key commercial contracts and debt raising, on to operational success, profitability and exit.</li>
+              <li>Company sold for $740m to Värde.</li>
+              <li>A crucial step was massively to outperform traditional credit scoring, The individual score I built was eventually sold standalone for £1m.</li>
+              <li>Other responsibilities included IT and data infrastructure build; design of automated marketing campaigns; maintenance of financial models</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="experience-item">
+          <div class="job-header">
+            <div class="company-info">
+              <div class="company">ROYAL BANK OF SCOTLAND PLC</div>
+              <div class="meta-info">
+                <span class="period">Jan 1998 - Feb 2000</span> | <span class="location">Edinburgh</span>
+              </div>
+            </div>
+            <div class="expand-icon"><i class="fas fa-chevron-down"></i></div>
+          </div>
+          <div class="job-details">
+            <div class="role">
+              Director, Business Analysis, then Board of Retail Direct
+              <button class="role-video-button" data-video="rbs"><i class="fas fa-play"></i></button>
+            </div>
+            <p>Initially head-hunted into leadership of a credit card joint venture with Advanta, then, after the merge with NatWest, elevated to Board of Retail Direct and executive management team of NatWest Streamline and other businesses.</p>
+            <ul class="responsibilities">
+              <li>Functionally responsible for IT across direct retail lending and merchant acquiring (50% of UK transactions were acquired by this business) and business analysis.</li>
+              <li>Led initial due diligence on retail lending and upon NatWest merger, created merged business units and backend systems.</li>
+              <li>Led renegotiation of largest strategic supplier contracts, developed European strategy.</li>
+              <li>Developed credible ML program.</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="experience-item">
+          <div class="job-header">
+            <div class="company-info">
+              <div class="company">GE CAPITAL</div>
+              <div class="meta-info">
+                <span class="period">Jun 1996 - Jan 1998</span> | <span class="location">Leeds and Paris</span>
+              </div>
+            </div>
+            <div class="expand-icon"><i class="fas fa-chevron-down"></i></div>
+          </div>
+          <div class="job-details">
+            <div class="role">
+              Analyst, Senior Analyst, Senior Manager, Director
+              <button class="role-video-button" data-video="ge"><i class="fas fa-play"></i></button>
+            </div>
+            <p>Recruited out of University role to help create a Global Modelling Team in a sequence of more senior roles in data science.</p>
+          </div>
+        </div>
+        
+        <div class="experience-item">
+          <div class="job-header">
+            <div class="company-info">
+              <div class="company">UNIVERSITY OF MANCHESTER, INSTITUTE OF SCIENCE AND TECHNOLOGY</div>
+              <div class="meta-info">
+                <span class="period">Jun 1994 - Jun 1996</span> | <span class="location">Manchester</span>
+              </div>
+            </div>
+            <div class="expand-icon"><i class="fas fa-chevron-down"></i></div>
+          </div>
+          <div class="job-details">
+            <div class="role">
+              Lecturer with Tenure in Economics
+              <button class="role-video-button" data-video="umist"><i class="fas fa-play"></i></button>
+            </div>
+            <p>Tenured after 6 months of joining the University, with a lectureship in economics, quantitative methods and game theory, included visiting positions in Max Planck Institute, UCSD and Helsinki Business School. Developed and became Director of the MSc in Business Economics</p>
+          </div>
+        </div>
+        
+        <div class="experience-item">
+          <div class="job-header">
+            <div class="company-info">
+              <div class="company">Wolfram Summer School</div>
+              <div class="meta-info">
+                <span class="period">June 2024 - August 2024</span> | <span class="location">Online</span>
+              </div>
+            </div>
+            <div class="expand-icon"><i class="fas fa-chevron-down"></i></div>
+          </div>
+          <div class="job-details">
+            <div class="role">
+              Researcher
+              <button class="role-video-button" data-video="wolfram"><i class="fas fa-play"></i></button>
+            </div>
+            <p>Investigating Bohmian quantum computing and evolutionary game simulations.</p>
+            <p><a href="https://community.wolfram.com/web/pharrald" target="_blank">View my work</a></p>
+          </div>
+        </div>
+        
+        <div class="experience-item">
+          <div class="job-header">
+            <div class="company-info">
+              <div class="company">CURVE</div>
+              <div class="meta-info">
+                <span class="period">Dec 2020 - Present</span> | <span class="location">London</span>
+              </div>
+            </div>
+            <div class="expand-icon"><i class="fas fa-chevron-down"></i></div>
+          </div>
+          <div class="job-details">
+            <div class="role">
+              Group CFO, CIO, CEO Curve Credit Ltd; Advisor
+              <button class="role-video-button" data-video="curve"><i class="fas fa-play"></i></button>
+            </div>
+            <p>A CreditEase portfolio investment. Joined from the fund at Series C to create consumer lending businesses in US, EEA and UK; once done, then CIO and CFO, Board Director.</p>
+            <ul class="responsibilities">
+              <li>All regulatory liaison for establishment of consumer lending permissions in UK and EEA (as SMF1); secured $1bn senior funding and a BIN-sponsor arrangement in the US. Developed in-app lending product and built out servicing infrastructure.</li>
+              <li>As CIO developed a credible and advanced ML/AI agenda and real-time monitoring. Successfully created and managed a risk and compliance function and replaced and managed all executive management in Lithuania.</li>
+              <li>As CFO, with CEO led a successful fundraising rounds holding the 2021 Series C valuation while implementing treasury, capital and cash flow management.</li>
+              <li>Orchestrated a full turnaround of business model from all-margin negative to all margin positive. Clean NMC PWC audit of all entities, clean audits in the US and EEA.</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="experience-item">
+          <div class="job-header">
+            <div class="company-info">
+              <div class="company">CREDITEASE FINTECH FUND AND FUND OF FUNDS</div>
+              <div class="meta-info">
+                <span class="period">Nov 2018 - Dec 2020</span> | <span class="location">London</span>
+              </div>
+            </div>
+            <div class="expand-icon"><i class="fas fa-chevron-down"></i></div>
+          </div>
+          <div class="job-details">
+            <div class="role">
+              Managing Director, Head of European Investments
+              <button class="role-video-button" data-video="creditease"><i class="fas fa-play"></i></button>
+            </div>
+            <p>Recruited by a former employee to lead EU/UK investments in fintech for this Chinese fund.</p>
+            <ul class="responsibilities">
+              <li>Leading origination of UK and European investments for the $500m fund.</li>
+              <li>Of the fund's 42 investments 9 became unicorns in this time.</li>
+              <li>Sourcing deals, management of deal flow, due diligence and investment structuring.</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="experience-item">
+          <div class="job-header">
+            <div class="company-info">
+              <div class="company">GOOGLE</div>
+              <div class="meta-info">
+                <span class="period">Dec 2016 - Nov 2018</span> | <span class="location">Hyderabad, Singapore, London</span>
+              </div>
+            </div>
+            <div class="expand-icon"><i class="fas fa-chevron-down"></i></div>
+          </div>
+          <div class="job-details">
+            <div class="role">
+              Risk Advisor
+              <button class="role-video-button" data-video="google"><i class="fas fa-play"></i></button>
+            </div>
+            <p>Recruited by former STAN regional CEO to act as Credit and Risk Advisor to the Next Billion Users initiatives focused on financial products.</p>
+            <ul class="responsibilities">
+              <li>Technical consulting on uses of machine learning and AI in financial product provision</li>
+              <li>Support Capital G on (African) M&A investment opportunities.</li>
+              <li>Evaluation of provision new financial products</li>
+              <li>Evaluation of alternatives Google data to support real time decisioning</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="experience-item">
+          <div class="job-header">
+            <div class="company-info">
+              <div class="company">ARROWGRASS CAPITAL PARTNERS</div>
+              <div class="meta-info">
+                <span class="period">Oct 2015 - Nov 2016</span> | <span class="location">London</span>
+              </div>
+            </div>
+            <div class="expand-icon"><i class="fas fa-chevron-down"></i></div>
+          </div>
+          <div class="job-details">
+            <div class="role">
+              Head of Alternative Lending
+              <button class="role-video-button" data-video="arrowgrass"><i class="fas fa-play"></i></button>
+            </div>
+            <p>Recruited into this $5bn hedge fund after a consulting contract designing risk systems.</p>
+            <ul class="responsibilities">
+              <li>Evaluation and structuring debt and equity transactions in fintech lending</li>
+              <li>Design and implementation of a risk measurement framework for alternative lending</li>
+              <li>Multiple fintech investments side-pocketed and listed successfully.</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="experience-item">
+          <div class="job-header">
+            <div class="company-info">
+              <div class="company">UNIVERSITY COLLEGE LONDON</div>
+              <div class="meta-info">
+                <span class="period">Sep 2013 - Nov 2020</span> | <span class="location">London</span>
+              </div>
+            </div>
+            <div class="expand-icon"><i class="fas fa-chevron-down"></i></div>
+          </div>
+          <div class="job-details">
+            <div class="role">
+              UCL visiting Professor in Computing Science
+              <button class="role-video-button" data-video="ucl"><i class="fas fa-play"></i></button>
+            </div>
+            <p>Supervision of students in PhD research, <em>ad hoc</em> teaching and research in blockchain engineering, AI/ML and economic (banking) systems simulation. Advisor to the Alan Turing Institute on AI/ML in industry.</p>
+          </div>
+        </div>
+        
+        <div class="experience-item">
+          <div class="job-header">
+            <div class="company-info">
+              <div class="company">STANDARD CHARTERED PLC</div>
+              <div class="meta-info">
+                <span class="period">Sep 2007 - Aug 2014</span> | <span class="location">Singapore and London</span>
+              </div>
+            </div>
+            <div class="expand-icon"><i class="fas fa-chevron-down"></i></div>
+          </div>
+          <div class="job-details">
+            <div class="role">
+              Managing Director, Global Head Portfolio Risk, Group Head Risk Strategy, Head of Quantitative Analytics
+              <button class="role-video-button" data-video="stan"><i class="fas fa-play"></i></button>
+            </div>
+            <p>Sequence of increasingly responsible positions ultimately a member of bank's Executive Management Team</p>
+            <ul class="responsibilities">
+              <li>Created and set Group risk appetite across all risk types, led active credit portfolio trading and issuance, set and managed ALM and liquidity risk limits. Led scenario analysis and stress testing, leading to ICAAP, ILAA.</li>
+              <li>Led UK PRA interaction Liaised with, advised and influenced central banks, regulatory bodies and supranationals in all areas of prudential regulation.</li>
+              <li>Voting member of the Capital Management and Group Credit Committees <em>inter alia</em>.</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="experience-item">
+          <div class="job-header">
+            <div class="company-info">
+              <div class="company">Art Course in Florence</div>
+              <div class="meta-info">
+                <span class="period">Nov 2006 - Sep 2007</span> | <span class="location">Florence, Italy</span>
+              </div>
+            </div>
+            <div class="expand-icon"><i class="fas fa-chevron-down"></i></div>
+          </div>
+          <div class="job-details">
+            <div class="role">
+              Sabbatical
+              <button class="role-video-button" data-video="florence"><i class="fas fa-play"></i></button>
+            </div>
+            <p>Sabbatical period studying fine art in Florence, Italy.</p>
+          </div>
+        </div>
+        
+        <div class="experience-item">
+          <div class="job-header">
+            <div class="company-info">
+              <div class="company">GE CAPITAL</div>
+              <div class="meta-info">
+                <span class="period">Jul 2004 - Oct 2006</span> | <span class="location">Stamford CT</span>
+              </div>
+            </div>
+            <div class="expand-icon"><i class="fas fa-chevron-down"></i></div>
+          </div>
+          <div class="job-details">
+            <div class="role">
+              Vice President, Analytics and Risk Strategy
+              <button class="role-video-button" data-video="gecapital"><i class="fas fa-play"></i></button>
+            </div>
+            <p>After NewDay exit, invited back to GE.</p>
+            <ul class="responsibilities">
+              <li>Corporate VP role based in GE Capital headquarters in Stamford CT, with global responsibility for risk strategy and quantitative analytics.</li>
+              <li>Developed global risk appetite and Edison-award winning stress testing framework used during mortgage crisis.</li>
+              <li>Due diligence in acquisitions of UK/EEA banks.</li>
+              <li>Liaison with GE R&D with introduction of novel ML optimisation techniques</li>
+              <li>Deal support for substantial structured finance issuance.</li>
+            </ul>
+          </div>
+        </div>
