@@ -1559,29 +1559,222 @@ function generateWord() {
 }
   
     
-    // Function to open document in Google Docs (simplified version)
-    function openInGoogleDocs() {
-      // Since Google Docs requires OAuth and API setup, for now we'll use a simplified approach
-      // This will open a Google Doc template and let the user copy-paste
-      alert('To use Google Docs, we\'ll open a new document where you can paste your CV content.');
-      
-      // Open a new Google Doc
-      window.open('https://docs.new', '_blank');
-      
-      // Future enhancement: Implement proper Google Docs API integration
+    // Function to open and import document in Google Docs
+function openInGoogleDocs() {
+  // First generate the Word document silently
+  const cvData = generateCVContent();
+  
+  // Check if docx is available
+  if (typeof docx === 'undefined') {
+    alert('Preparing Google Docs version...');
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/docx@7.8.2/build/index.js';
+    script.onload = function() {
+      // Once loaded, retry
+      openInGoogleDocs();
+    };
+    document.head.appendChild(script);
+    return;
+  }
+  
+  // Create Word document
+  const doc = new docx.Document({
+    sections: [
+      {
+        properties: {},
+        children: [
+          new docx.Paragraph({
+            text: cvData.name,
+            heading: docx.HeadingLevel.HEADING_1,
+            thematicBreak: true,
+            spacing: { after: 200 }
+          }),
+          new docx.Paragraph({
+            text: cvData.title,
+            spacing: { after: 400 }
+          }),
+          new docx.Paragraph({
+            text: "PROFILE",
+            heading: docx.HeadingLevel.HEADING_2,
+            spacing: { before: 400, after: 200 }
+          }),
+          new docx.Paragraph({
+            text: cvData.profile,
+            spacing: { after: 400 }
+          }),
+          // Experience header
+          new docx.Paragraph({
+            text: "EXPERIENCE",
+            heading: docx.HeadingLevel.HEADING_2,
+            spacing: { before: 400, after: 200 }
+          })
+        ]
+      }
+    ]
+  });
+  
+  // Add experience items
+  cvData.experience.forEach(exp => {
+    doc.addParagraph(
+      new docx.Paragraph({
+        text: exp.company,
+        heading: docx.HeadingLevel.HEADING_3,
+        spacing: { before: 300, after: 100 }
+      })
+    );
+    
+    doc.addParagraph(
+      new docx.Paragraph({
+        children: [
+          new docx.TextRun({
+            text: `${exp.role} | ${exp.period} | ${exp.location}`,
+            italics: true
+          })
+        ],
+        spacing: { after: 200 }
+      })
+    );
+    
+    if (exp.description) {
+      doc.addParagraph(
+        new docx.Paragraph({
+          text: exp.description,
+          spacing: { after: 200 }
+        })
+      );
     }
     
-    // Initialize the page
-    document.addEventListener('DOMContentLoaded', function() {
-      // Open first job by default for better UX
-      const firstJob = document.querySelector('.experience-item:first-child .job-header');
-      if (firstJob) {
-        toggleJobDetails(firstJob);
-      }
-      
-      // Fetch Substack articles
-      fetchSubstackArticles();
+    if (exp.responsibilities && exp.responsibilities.length > 0) {
+      exp.responsibilities.forEach(resp => {
+        doc.addParagraph(
+          new docx.Paragraph({
+            text: resp,
+            bullet: { level: 0 },
+            spacing: { after: 100 }
+          })
+        );
+      });
+    }
+  });
+  
+  // Add education section
+  doc.addParagraph(
+    new docx.Paragraph({
+      text: "EDUCATION",
+      heading: docx.HeadingLevel.HEADING_2,
+      spacing: { before: 400, after: 200 }
+    })
+  );
+  
+  doc.addParagraph(
+    new docx.Paragraph({
+      text: cvData.education,
+      spacing: { after: 400 }
+    })
+  );
+  
+  // Add publications if available
+  if (cvData.publications.length > 0) {
+    doc.addParagraph(
+      new docx.Paragraph({
+        text: "SELECTED PUBLICATIONS",
+        heading: docx.HeadingLevel.HEADING_2,
+        spacing: { before: 400, after: 200 }
+      })
+    );
+    
+    cvData.publications.forEach(pub => {
+      doc.addParagraph(
+        new docx.Paragraph({
+          text: pub,
+          bullet: { level: 0 },
+          spacing: { after: 200 }
+        })
+      );
     });
+  }
+  
+  // Add visiting positions if available
+  if (cvData.visitingPositions.length > 0) {
+    doc.addParagraph(
+      new docx.Paragraph({
+        text: "VISITING POSITIONS",
+        heading: docx.HeadingLevel.HEADING_2,
+        spacing: { before: 400, after: 200 }
+      })
+    );
+    
+    cvData.visitingPositions.forEach(pos => {
+      doc.addParagraph(
+        new docx.Paragraph({
+          text: pos,
+          bullet: { level: 0 },
+          spacing: { after: 100 }
+        })
+      );
+    });
+  }
+  
+  // Generate DOCX file
+  docx.Packer.toBlob(doc).then(blob => {
+    // Save DOCX locally
+    const docxUrl = URL.createObjectURL(blob);
+    const tempLink = document.createElement('a');
+    tempLink.href = docxUrl;
+    tempLink.download = 'paul-harrald-cv.docx';
+    document.body.appendChild(tempLink);
+    tempLink.click();
+    document.body.removeChild(tempLink);
+    
+    // Open Google Drive upload page in a new tab
+    setTimeout(() => {
+      window.open('https://drive.google.com/drive/upload', '_blank');
+      
+      // Show instructions modal
+      const instructionsModal = document.createElement('div');
+      instructionsModal.style.position = 'fixed';
+      instructionsModal.style.top = '50%';
+      instructionsModal.style.left = '50%';
+      instructionsModal.style.transform = 'translate(-50%, -50%)';
+      instructionsModal.style.background = 'white';
+      instructionsModal.style.padding = '20px';
+      instructionsModal.style.borderRadius = '8px';
+      instructionsModal.style.boxShadow = '0 4px 20px rgba(0,0,0,0.2)';
+      instructionsModal.style.zIndex = '10000';
+      instructionsModal.style.maxWidth = '500px';
+      
+      instructionsModal.innerHTML = `
+        <h3 style="color: #1a237e; margin-top: 0;">Google Docs Import</h3>
+        <p>Your CV has been downloaded as a Word document. To open it in Google Docs:</p>
+        <ol>
+          <li>In the Google Drive tab that just opened, click "New" → "File upload"</li>
+          <li>Select the "paul-harrald-cv.docx" file you just downloaded</li>
+          <li>Once uploaded, right-click the file and select "Open with" → "Google Docs"</li>
+        </ol>
+        <button id="close-instructions" style="background: #42a5f5; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; float: right;">Got it</button>
+      `;
+      
+      document.body.appendChild(instructionsModal);
+      
+      // Add overlay
+      const overlay = document.createElement('div');
+      overlay.style.position = 'fixed';
+      overlay.style.top = '0';
+      overlay.style.left = '0';
+      overlay.style.right = '0';
+      overlay.style.bottom = '0';
+      overlay.style.backgroundColor = 'rgba(0,0,0,0.5)';
+      overlay.style.zIndex = '9999';
+      document.body.appendChild(overlay);
+      
+      // Close modal on button click
+      document.getElementById('close-instructions').addEventListener('click', function() {
+        document.body.removeChild(instructionsModal);
+        document.body.removeChild(overlay);
+      });
+    }, 1000);
+  });
+}
   </script>
 </body>
 </html>
